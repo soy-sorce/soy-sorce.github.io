@@ -26,6 +26,18 @@ export function getArticleHref(entry: CollectionEntry<"articles">, locale: Local
   return `/${locale}/articles/${getSlugFromId(entry.id)}/`;
 }
 
+/**
+ * pinned: true の記事を常に先頭にまとめ、その中・残りともに date の降順で並べる。
+ */
+export function sortArticles(
+  entries: CollectionEntry<"articles">[]
+): CollectionEntry<"articles">[] {
+  return [...entries].sort((a, b) => {
+    if (a.data.pinned !== b.data.pinned) return a.data.pinned ? -1 : 1;
+    return b.data.date.getTime() - a.data.date.getTime();
+  });
+}
+
 export async function getArticleCounterpart(locale: Locale, slug: string) {
   const otherLocale: Locale = locale === "ja" ? "en" : "ja";
   const all = await getCollection("articles");

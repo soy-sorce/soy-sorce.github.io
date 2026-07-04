@@ -10,6 +10,7 @@ const articles = defineCollection({
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     selected: z.boolean().default(false),
+    pinned: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
     url: z.url().optional(),

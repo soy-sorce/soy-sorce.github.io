@@ -230,7 +230,7 @@ section.soft {
 }
 
 .entry-list li {
-  padding: 22px 0 22px 20px;
+  padding: 14px 0 14px 20px;
   border-left: 2px solid var(--color-border);
   margin-bottom: 6px;
   transition: border-color 0.15s ease;
@@ -244,13 +244,13 @@ section.soft {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-muted);
-  margin: 0 0 8px;
+  margin: 0 0 6px;
 }
 
 .entry-title {
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 600;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
 }
 
 .entry-title a {
@@ -265,7 +265,55 @@ section.soft {
 .entry-desc {
   margin: 0;
   color: var(--color-muted);
-  font-size: 15px;
+  font-size: 14px;
+}
+
+.pin-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.view-all {
+  margin: 20px 0 0;
+  font-size: 14px;
+}
+
+.view-all a {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-accent-light);
+}
+
+.view-all a:hover {
+  color: var(--color-text);
+}
+
+.load-more {
+  display: block;
+  margin: 24px 0 0;
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.load-more:hover {
+  background: var(--color-border);
 }
 
 .entry-links {

@@ -1,12 +1,10 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import ArticleEntry from "../../../components/ArticleEntry.astro";
-import { getArticlesByLocale } from "../../../utils/articles";
+import ArticleList from "../../../components/ArticleList.astro";
+import { getArticlesByLocale, sortArticles } from "../../../utils/articles";
 
 const locale = "en" as const;
-const articles = (await getArticlesByLocale(locale)).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
+const articles = sortArticles(await getArticlesByLocale(locale));
 ---
 
 <BaseLayout locale={locale} title="Articles - Shohei Ichioka">
@@ -15,11 +13,7 @@ const articles = (await getArticlesByLocale(locale)).sort(
       <p class="eyebrow">Articles</p>
       {
         articles.length > 0 ? (
-          <ul class="entry-list">
-            {articles.map((entry) => (
-              <ArticleEntry entry={entry} locale={locale} />
-            ))}
-          </ul>
+          <ArticleList articles={articles} locale={locale} />
         ) : (
           <p class="empty-state">No articles yet.</p>
         )

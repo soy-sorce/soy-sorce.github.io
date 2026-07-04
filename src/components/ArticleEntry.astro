@@ -6,16 +6,20 @@ import type { Locale } from "../utils/i18n";
 interface Props {
   entry: CollectionEntry<"articles">;
   locale: Locale;
+  hidden?: boolean;
 }
 
-const { entry, locale } = Astro.props;
+const { entry, locale, hidden = false } = Astro.props;
 const href = getArticleHref(entry, locale);
 const external = isExternalArticle(entry);
 const dateLabel = entry.data.date.toISOString().slice(0, 10);
 ---
 
-<li>
-  <p class="entry-meta">{dateLabel}</p>
+<li hidden={hidden}>
+  <p class="entry-meta">
+    {entry.data.pinned && <span class="pin-badge">PICK UP</span>}
+    {dateLabel}
+  </p>
   <h3 class="entry-title">
     {
       external ? (
