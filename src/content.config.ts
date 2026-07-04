@@ -12,6 +12,7 @@ const articles = defineCollection({
     selected: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
+    url: z.url().optional(),
   }),
 });
 

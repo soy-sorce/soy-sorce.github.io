@@ -1,6 +1,6 @@
 import { getCollection } from "astro:content";
 import type { Locale } from "./i18n";
-import { getArticlesByLocale, getSlugFromId } from "./articles";
+import { getArticleHref, getArticlesByLocale } from "./articles";
 
 export type LocalizedNewsItem = {
   id: string;
@@ -66,7 +66,6 @@ export async function getNewsItems(locale: Locale, limit = 5): Promise<Localized
 
   const articles = await getArticlesByLocale(locale);
   for (const entry of articles.filter((a) => a.data.showInNews)) {
-    const slug = getSlugFromId(entry.id);
     const fallback =
       locale === "ja"
         ? `記事『${entry.data.title}』を公開しました。`
@@ -74,7 +73,7 @@ export async function getNewsItems(locale: Locale, limit = 5): Promise<Localized
     items.push({
       id: `article-${entry.id}`,
       date: toIsoDateString(entry.data.date),
-      url: `/${locale}/articles/${slug}/`,
+      url: getArticleHref(entry, locale),
       text: entry.data.newsSummary || fallback,
       source: "article",
     });

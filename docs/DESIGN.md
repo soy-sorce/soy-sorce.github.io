@@ -451,6 +451,7 @@ const articles = defineCollection({
     selected: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
+    url: z.url().optional(),
   }),
 });
 ```
@@ -458,6 +459,8 @@ const articles = defineCollection({
 `glob()` loader は `base` からの相対パス（拡張子なし）を `id` として自動生成する。例えば `src/content/articles/ja/bm25-mmr.mdx` の `id` は `"ja/bm25-mmr"` になる。この `id` の先頭セグメントを locale 判定に使う（6.5節）。
 
 記事にタグ（トピックラベル）は付けない。トピックは `description` や本文で表現する。
+
+`url` は、Zenn等の外部サイトに書いた記事をこのサイトの「Articles」一覧に**リンク投稿として**載せるためのフィールドである（6.4節）。値が無い記事は通常通りサイト内に記事詳細ページを持つ。
 
 ### 6.3 Article frontmatter
 
@@ -477,6 +480,19 @@ newsSummary: "BM25 + MMR に関する記事を公開しました。"
 本文を書く。
 ```
 
+外部サイト（Zennなど）に書いた記事をリンク投稿として載せる場合は `url` を追加する。この場合、本文はサイト上で使われないため空でもよい。
+
+```mdx
+---
+title: "BM25 + MMR 検索パイプラインの設計"
+description: "BM25検索とMMRリランキングを組み合わせた検索パイプラインの設計メモ。"
+date: "2026-07-04"
+selected: true
+showInNews: true
+url: "https://zenn.dev/pepepepepepepe/articles/bm25-mmr"
+---
+```
+
 ### 6.4 Articles の表示ルール
 
 - `/ja/articles` には日本語記事を一覧表示
@@ -486,6 +502,12 @@ newsSummary: "BM25 + MMR に関する記事を公開しました。"
 - `showInNews: true` の場合、Newsに自動表示
 - 一覧・トップページとも、記事はカードではなく枠のないリスト形式（左のアクセント罫線区切り）で表示する
 - タグは表示しない
+- `url` が設定されている記事は「リンク投稿」として扱う
+  - タイトルは `url` へのリンクになる（新しいタブで開く。`target="_blank" rel="noopener noreferrer"`）
+  - サイト内の記事詳細ページ（`/ja/articles/[slug]`）は**生成しない**（`getStaticPaths` で `url` ありのエントリを除外する）
+  - Newsに載る場合のリンク先も `url` になる
+  - 対訳記事（6.6節）の相手が `url` ありの場合、サイト内ページが存在しないためhreflangの対象からは除外する（14.4節）
+- `url` が無い記事は従来通りサイト内の記事詳細ページにリンクする
 
 ### 6.5 locale 判定方法
 
@@ -508,7 +530,19 @@ export async function getArticlesByLocale(locale: Locale) {
   const all = await getCollection("articles");
   return all.filter((entry) => getLocaleFromId(entry.id) === locale);
 }
+
+// url指定がある記事は外部の「リンク投稿」として扱い、サイト内の記事詳細ページは持たない
+export function isExternalArticle(entry: CollectionEntry<"articles">): boolean {
+  return Boolean(entry.data.url);
+}
+
+export function getArticleHref(entry: CollectionEntry<"articles">, locale: Locale): string {
+  if (entry.data.url) return entry.data.url;
+  return `/${locale}/articles/${getSlugFromId(entry.id)}/`;
+}
 ```
+
+`ArticleEntry.astro`（12.5節）や `utils/news.ts`（9章）は、記事へのリンクを組み立てる際に必ず `getArticleHref()` を使い、`url` の有無を意識せずに済むようにする。
 
 ### 6.6 日本語・英語記事の対応関係とペアリング検証
 
@@ -906,7 +940,7 @@ en: newsSummary があればそれを表示。なければ "Added award: title."
 
 ### 9.5 News item のリンク先が無い場合の扱い
 
-- Article由来のNews item: 常に記事詳細ページ（`/ja/articles/[slug]` 等）を `url` に設定する
+- Article由来のNews item: `getArticleHref()`（6.5節）の結果を `url` に設定する。通常はサイト内の記事詳細ページ（`/ja/articles/[slug]` 等）、記事が外部リンク投稿（6.4節）の場合はその外部URL
 - Paper由来のNews item: 現段階ではPapersの専用詳細ページが無いため、`url` は設定しない（`/ja/papers` 一覧ページへのアンカーリンクも現時点では作らない）
 - Award由来のNews item: 現段階ではAwardsの専用詳細ページが無いため、`url` は設定しない
 - `manual-news.yml` の手動Newsは、`url` を明示的に指定した場合のみリンクにする
@@ -1101,7 +1135,8 @@ GitHub / X / LinkedIn / Zenn / Email
 - 記事タイトル
 - description
 - date
-- link
+- link（`getArticleHref()` で算出。`url` があれば外部リンク、無ければサイト内詳細ページ）
+- `url` がある記事は新しいタブで開く（`target="_blank" rel="noopener noreferrer"`）。タイトル末尾に外部リンクであることを示す記号（例: ↗）を付ける
 - 枠のないリスト表示（左のアクセント罫線）で描画する。タグは表示しない
 
 ### 12.6 PaperList.astro
@@ -1167,6 +1202,7 @@ const articles = defineCollection({
     selected: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
+    url: z.url().optional(),
   }),
 });
 
@@ -1326,11 +1362,12 @@ const alternatePath = getAlternatePath(pathname, otherLocale);
 )}
 ```
 
-記事詳細ページ（`/ja/articles/[slug]`）は、対になる言語の記事が存在するとは限らない（6.6節）。存在しない場合に `hreflang="en"` が404ページを指してしまうと逆効果なので、記事詳細ページを描画する際は事前に対訳記事の有無を確認し、無い場合は `hasAlternate={false}` を渡して自身の言語のみの `canonical` を出力する。
+記事詳細ページ（`/ja/articles/[slug]`）は、対になる言語の記事が存在するとは限らない（6.6節）。存在しない場合に `hreflang="en"` が404ページを指してしまうと逆効果なので、記事詳細ページを描画する際は事前に対訳記事の有無を確認し、無い場合は `hasAlternate={false}` を渡して自身の言語のみの `canonical` を出力する。対訳記事が `url`（外部リンク投稿, 6.4節）を持つ場合はサイト内ページが存在しないため、これも「対訳なし」として扱う。
 
 ```ts
 // 呼び出し側のイメージ
 const pair = await getArticleCounterpart(locale, slug); // 対訳記事があれば返す, 無ければ undefined
+const hasAlternate = Boolean(pair && !isExternalArticle(pair));
 ```
 
 ---
@@ -1690,6 +1727,7 @@ git push origin main
 - Award の `url` を設定するとタイトルがリンクになり、未設定だとプレーンテキストになる
 - `pnpm run check:articles` が日英ペア欠けを警告として出力する
 - 記事詳細ページに `hreflang` タグが正しく出力される（対訳が無い場合は自身の言語のみ）
+- 記事に `url` を設定すると、一覧・トップページ・Newsのタイトルが外部リンクになり、サイト内の記事詳細ページは生成されない
 - main に push すると GitHub Pages にデプロイされる
 
 ---
