@@ -449,6 +449,7 @@ const articles = defineCollection({
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     selected: z.boolean().default(false),
+    pinned: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
     url: z.url().optional(),
@@ -509,6 +510,20 @@ url: "https://zenn.dev/pepepepepepepe/articles/bm25-mmr"
   - 対訳記事（6.6節）の相手が `url` ありの場合、サイト内ページが存在しないためhreflangの対象からは除外する（14.4節）
 - `url` が無い記事は従来通りサイト内の記事詳細ページにリンクする
 
+### 6.4.1 並び順とピン留め（`pinned`）
+
+記事一覧・トップページの「Selected Articles」は、いずれも以下の順で並べる（`sortArticles()`、6.5節）。
+
+1. `pinned: true` の記事（この中では `date` の降順）
+2. それ以外の記事（`date` の降順）
+
+`pinned: true` の記事は日付に関わらず常に先頭グループに表示され、日付表示の横に `PICK UP` ラベルを付けて区別する。`selected` とは独立したフラグであり、「トップページには出さないが一覧ページの先頭には固定したい」という使い方もできる。
+
+### 6.4.2 表示件数と続きの読み込み
+
+- トップページの「Selected Articles」は先頭5件のみ表示する。`selected: true` の記事が5件を超える場合、一覧ページ（`/ja/articles`）への「すべての記事を見る」リンクを表示する
+- `/ja/articles` `/en/articles` の一覧ページは、初期表示5件＋「もっと見る」ボタンで5件ずつ追加表示する。全記事はビルド時にHTMLへ埋め込まれており、「もっと見る」は`hidden`属性の付け外しのみを行う軽量なvanilla JSで実装する（サーバー通信やページ遷移は発生しない）
+
 ### 6.5 locale 判定方法
 
 `articles` collection は ja/en を1つのcollectionにまとめているため、`id` の先頭セグメントで locale を判定する。
@@ -540,9 +555,17 @@ export function getArticleHref(entry: CollectionEntry<"articles">, locale: Local
   if (entry.data.url) return entry.data.url;
   return `/${locale}/articles/${getSlugFromId(entry.id)}/`;
 }
+
+// pinned: true の記事を常に先頭にまとめ、その中・残りともに date の降順で並べる（6.4.1節）
+export function sortArticles(entries: CollectionEntry<"articles">[]): CollectionEntry<"articles">[] {
+  return [...entries].sort((a, b) => {
+    if (a.data.pinned !== b.data.pinned) return a.data.pinned ? -1 : 1;
+    return b.data.date.getTime() - a.data.date.getTime();
+  });
+}
 ```
 
-`ArticleEntry.astro`（12.5節）や `utils/news.ts`（9章）は、記事へのリンクを組み立てる際に必ず `getArticleHref()` を使い、`url` の有無を意識せずに済むようにする。
+`ArticleEntry.astro`（12.5節）や `utils/news.ts`（9章）は、記事へのリンクを組み立てる際に必ず `getArticleHref()` を使い、`url` の有無を意識せずに済むようにする。一覧・トップページへの表示順は必ず `sortArticles()` を経由させる。
 
 ### 6.6 日本語・英語記事の対応関係とペアリング検証
 
@@ -1010,6 +1033,7 @@ portfolio-site/
 │   │   ├── NewsList.astro
 │   │   ├── Bio.astro
 │   │   ├── ArticleEntry.astro
+│   │   ├── ArticleList.astro
 │   │   ├── PaperList.astro
 │   │   ├── AwardsList.astro
 │   │   └── LanguageSwitcher.astro
@@ -1137,9 +1161,21 @@ GitHub / X / LinkedIn / Zenn / Email
 - date
 - link（`getArticleHref()` で算出。`url` があれば外部リンク、無ければサイト内詳細ページ）
 - `url` がある記事は新しいタブで開く（`target="_blank" rel="noopener noreferrer"`）。タイトル末尾に外部リンクであることを示す記号（例: ↗）を付ける
+- `pinned: true` の記事は日付の横に `PICK UP` ラベルを付ける（6.4.1節）
+- 呼び出し側から `hidden` を渡された場合、`<li hidden>` として描画する（6.4.2節の「もっと見る」用。ArticleList.astroが使用）
 - 枠のないリスト表示（左のアクセント罫線）で描画する。タグは表示しない
 
-### 12.6 PaperList.astro
+### 12.6 ArticleList.astro
+
+役割。
+
+- `ArticleEntry.astro` を並べた `<ul class="entry-list">` を描画する
+- 表示件数（既定5件）を超える記事は `hidden` 付きで一緒にレンダリングしておき、「もっと見る」ボタンで5件ずつ表示する（6.4.2節）
+- 全記事が既にHTMLに含まれているため、ボタンのクリックはvanilla JSでの`hidden`属性の付け外しのみで完結する。サーバー通信は発生しない
+- 隠れている項目が無くなったらボタンごと消す
+- `/ja/articles` `/en/articles` の一覧ページで使用する。トップページの「Selected Articles」は5件で打ち切って「すべての記事を見る」リンクを出すだけなので、このコンポーネントは使わない（12.2節Heroとは別に、ページ側で直接`<ul class="entry-list">`を組み立てる）
+
+### 12.7 PaperList.astro
 
 役割。
 
@@ -1150,7 +1186,7 @@ GitHub / X / LinkedIn / Zenn / Email
 - その他の paper links（pdf / code / project / bibtex）を表示
 - 枠のないリスト表示（左のアクセント罫線）で描画する。トピックタグは表示しない
 
-### 12.7 AwardsList.astro
+### 12.8 AwardsList.astro
 
 役割。
 
@@ -1159,7 +1195,7 @@ GitHub / X / LinkedIn / Zenn / Email
 - `url` が設定されている場合、タイトルを外部ページへのリンクとして描画
 - `url` が無い場合、タイトルをプレーンテキストとして描画
 
-### 12.8 Footer.astro
+### 12.9 Footer.astro
 
 役割。
 
@@ -1200,6 +1236,7 @@ const articles = defineCollection({
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     selected: z.boolean().default(false),
+    pinned: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
     url: z.url().optional(),
@@ -1660,6 +1697,7 @@ src/components/Hero.astro
 src/components/NewsList.astro
 src/components/Bio.astro
 src/components/ArticleEntry.astro
+src/components/ArticleList.astro
 src/components/PaperList.astro
 src/components/AwardsList.astro
 src/components/LanguageSwitcher.astro
@@ -1728,6 +1766,9 @@ git push origin main
 - `pnpm run check:articles` が日英ペア欠けを警告として出力する
 - 記事詳細ページに `hreflang` タグが正しく出力される（対訳が無い場合は自身の言語のみ）
 - 記事に `url` を設定すると、一覧・トップページ・Newsのタイトルが外部リンクになり、サイト内の記事詳細ページは生成されない
+- 記事に `pinned: true` を設定すると、日付に関わらず一覧・トップページの先頭に `PICK UP` ラベル付きで表示される
+- 記事が6件以上あるとき、`/ja/articles` `/en/articles` に「もっと見る」ボタンが表示され、クリックで5件ずつ追加表示される
+- トップページの「Selected Articles」で選択記事が5件を超えるとき、「すべての記事を見る」リンクが表示される
 - main に push すると GitHub Pages にデプロイされる
 
 ---
