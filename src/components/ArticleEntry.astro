@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getSlugFromId } from "../utils/articles";
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  entry: CollectionEntry<"articles">;
+  locale: Locale;
+}
+
+const { entry, locale } = Astro.props;
+const slug = getSlugFromId(entry.id);
+const href = `/${locale}/articles/${slug}/`;
+const dateLabel = entry.data.date.toISOString().slice(0, 10);
+---
+
+<li>
+  <p class="entry-meta">{dateLabel}</p>
+  <h3 class="entry-title">
+    <a href={href}>{entry.data.title}</a>
+  </h3>
+  {entry.data.description && <p class="entry-desc">{entry.data.description}</p>}
+</li>

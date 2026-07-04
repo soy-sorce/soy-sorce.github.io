@@ -1,0 +1,26 @@
+---
+import { getBio } from "../utils/profile";
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const bio = getBio()[locale];
+---
+
+{
+  bio.length > 0 && (
+    <section id="bio">
+      <div class="container">
+        <p class="eyebrow">Bio</p>
+        <ul class="bio-list">
+          {bio.map((line) => (
+            <li>{line}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

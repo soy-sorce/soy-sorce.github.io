@@ -1,0 +1,20 @@
+links:
+  github:
+    label: "GitHub"
+    url: "https://github.com/soy-sorce"
+  x:
+    label: "X"
+    url: "https://x.com/SIchioka_0623"
+  linkedin:
+    label: "LinkedIn"
+    url: "https://www.linkedin.com/in/shohei-ichioka-b93806358/"
+  zenn:
+    label: "Zenn"
+    url: "https://zenn.dev/pepepepepepepe"
+  googleScholar:
+    label: "Google Scholar"
+    url: ""
+  email:
+    label: "Email"
+    url: "mailto:ichi.shouhei44en@gmail.com"
+    display: "ichi.shouhei44en [at] gmail.com"

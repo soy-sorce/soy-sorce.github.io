@@ -1,0 +1,27 @@
+---
+import { getLinks } from "../utils/profile";
+
+const links = getLinks();
+const visibleLinks = Object.values(links).filter((link) => link.url);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="link-row">
+      {
+        visibleLinks.map((link, i) => (
+          <>
+            {i > 0 && (
+              <span class="sep" aria-hidden="true">
+                /
+              </span>
+            )}
+            <a href={link.url}>{link.display ?? link.label}</a>
+          </>
+        ))
+      }
+    </div>
+    <p class="copyright">© {year} Shohei Ichioka</p>
+  </div>
+</footer>

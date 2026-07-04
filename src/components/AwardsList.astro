@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  awards: CollectionEntry<"awards">[];
+  locale: Locale;
+}
+
+const { awards, locale } = Astro.props;
+const sorted = [...awards].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<ul class="award-list">
+  {
+    sorted.map((entry) => {
+      const data = entry.data;
+      return (
+        <li>
+          <div class="award-main">
+            {data.url ? (
+              <a class="award-title" href={data.url}>
+                {data.title[locale]}
+              </a>
+            ) : (
+              <span class="award-title">{data.title[locale]}</span>
+            )}
+            <span class="award-org">{data.organization[locale]}</span>
+          </div>
+          <span class="award-year">{data.year}</span>
+        </li>
+      );
+    })
+  }
+</ul>

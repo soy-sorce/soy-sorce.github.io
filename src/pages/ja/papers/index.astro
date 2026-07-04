@@ -1,0 +1,17 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PaperList from "../../../components/PaperList.astro";
+
+const locale = "ja" as const;
+const papers = await getCollection("papers");
+---
+
+<BaseLayout locale={locale} title="Papers - Shohei Ichioka">
+  <section id="papers-index">
+    <div class="container">
+      <p class="eyebrow">Papers</p>
+      {papers.length > 0 ? <PaperList papers={papers} locale={locale} /> : <p class="empty-state">論文はまだありません。</p>}
+    </div>
+  </section>
+</BaseLayout>

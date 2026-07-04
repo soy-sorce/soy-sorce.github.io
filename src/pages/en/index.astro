@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Hero from "../../components/Hero.astro";
+import NewsList from "../../components/NewsList.astro";
+import Bio from "../../components/Bio.astro";
+import ArticleEntry from "../../components/ArticleEntry.astro";
+import PaperList from "../../components/PaperList.astro";
+import AwardsList from "../../components/AwardsList.astro";
+import { getArticlesByLocale } from "../../utils/articles";
+
+const locale = "en" as const;
+
+const selectedArticles = (await getArticlesByLocale(locale))
+  .filter((entry) => entry.data.selected)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const selectedPapers = (await getCollection("papers")).filter((entry) => entry.data.selected);
+const selectedAwards = (await getCollection("awards")).filter((entry) => entry.data.selected);
+---
+
+<BaseLayout locale={locale} title="Shohei Ichioka" description="Portfolio site of Shohei Ichioka">
+  <Hero locale={locale} />
+  <NewsList locale={locale} />
+  <Bio locale={locale} />
+  {
+    selectedArticles.length > 0 && (
+      <section class="soft" id="articles">
+        <div class="container">
+          <p class="eyebrow">Selected Articles</p>
+          <ul class="entry-list">
+            {selectedArticles.map((entry) => (
+              <ArticleEntry entry={entry} locale={locale} />
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+  {
+    selectedPapers.length > 0 && (
+      <section id="papers">
+        <div class="container">
+          <p class="eyebrow">Selected Papers</p>
+          <PaperList papers={selectedPapers} locale={locale} />
+        </div>
+      </section>
+    )
+  }
+  {
+    selectedAwards.length > 0 && (
+      <section class="soft" id="awards">
+        <div class="container">
+          <p class="eyebrow">Awards</p>
+          <AwardsList awards={selectedAwards} locale={locale} />
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

@@ -1,0 +1,146 @@
+---
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  locale: Locale;
+  pathname: string;
+}
+
+const { locale, pathname } = Astro.props;
+
+const nav = [
+  { href: `/${locale}/articles/`, label: locale === "ja" ? "記事" : "Articles" },
+  { href: `/${locale}/papers/`, label: locale === "ja" ? "論文" : "Papers" },
+];
+---
+
+<header class="site-header">
+  <div class="header-inner container">
+    <a class="brand" href={`/${locale}/`}>Shohei Ichioka</a>
+    <nav class="main-nav" id="main-nav">
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      <LanguageSwitcher locale={locale} pathname={pathname} />
+    </nav>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Menu" aria-expanded="false">
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(140%) blur(6px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-inner {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .brand:hover {
+    color: var(--color-accent);
+  }
+
+  .main-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .main-nav a {
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .main-nav a:hover {
+    color: var(--color-text);
+    border-bottom-color: var(--color-accent-light);
+  }
+
+  .menu-toggle {
+    display: none;
+    padding: 8px 10px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .menu-toggle .bar {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--color-text);
+    margin: 3px 0;
+  }
+
+  @media (max-width: 720px) {
+    .menu-toggle {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .main-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 12px 24px 18px;
+      display: none;
+    }
+
+    .main-nav.is-open {
+      display: flex;
+    }
+
+    .main-nav a {
+      width: 100%;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+</style>
+
+<script>
+  const nav = document.getElementById("main-nav");
+  const menuBtn = document.getElementById("menu-toggle");
+
+  menuBtn?.addEventListener("click", () => {
+    const open = nav?.classList.toggle("is-open") ?? false;
+    menuBtn.setAttribute("aria-expanded", String(open));
+  });
+
+  nav?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => nav.classList.remove("is-open"));
+  });
+</script>

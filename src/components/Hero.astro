@@ -1,0 +1,55 @@
+---
+import { getProfile, getLinks, getInterests } from "../utils/profile";
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const profile = getProfile();
+const links = getLinks();
+const interests = getInterests();
+
+const heroLines = [...profile.hero[locale]];
+const interestsList = interests[locale];
+if (interestsList.length > 0) {
+  const label = locale === "ja" ? "研究関心" : "Research interests";
+  const separator = locale === "ja" ? "、" : ", ";
+  heroLines.push(`${label}: ${interestsList.join(separator)}`);
+}
+
+const visibleLinks = Object.values(links).filter((link) => link.url);
+const githubHandle = links.github.url ? links.github.url.replace(/\/$/, "").split("/").pop() : null;
+---
+
+<section class="hero" id="top">
+  <div class="container">
+    {githubHandle && <p class="hero-id">{githubHandle}</p>}
+    <h1>{profile.name[locale]}</h1>
+    <ul class="hero-lines">
+      {heroLines.map((line) => <li>{line}</li>)}
+    </ul>
+    <div class="link-row">
+      {
+        visibleLinks.map((link, i) => (
+          <>
+            {i > 0 && (
+              <span class="sep" aria-hidden="true">
+                /
+              </span>
+            )}
+            <a href={link.url}>{link.display ?? link.label}</a>
+          </>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: 88px;
+    padding-bottom: 88px;
+  }
+</style>
