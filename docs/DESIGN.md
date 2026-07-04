@@ -1109,14 +1109,20 @@ portfolio-site/
 Name | Articles | Papers | Awards | CV | JA/EN
 ```
 
-初期実装では Awards / CV はリンク先が未実装でもよい。
-ただし、未実装ページへのリンクを避けるなら、Header から Awards / CV は一時的に外してもよい。
+Awardsには専用ページがまだ無いため（19.2節）、Headerの「受賞」リンクはホームの `#awards` セクションへのアンカーリンク（`/${locale}/#awards`）にする。他のページから見ても常にホームへ遷移してAwardsセクションまでスクロールする。将来 `/ja/awards` を作ったら、このリンク先をそちらに差し替える。
 
-推奨。
+CVはリンク先が未実装のため、実装するまでHeaderから外す。
+
+現状。
 
 ```txt
-初期: Name | Articles | Papers | JA/EN
-将来: Name | Articles | Papers | Awards | CV | JA/EN
+Name | Articles | Papers | Awards（#awardsアンカー） | JA/EN
+```
+
+将来（`/ja/awards` `/ja/cv` 追加後）。
+
+```txt
+Name | Articles | Papers | Awards | CV | JA/EN
 ```
 
 ### 12.2 Hero.astro
