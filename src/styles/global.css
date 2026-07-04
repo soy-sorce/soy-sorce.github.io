@@ -401,6 +401,13 @@ a.award-title:hover {
   margin-top: 3px;
 }
 
+.award-desc {
+  margin: 8px 0 0;
+  color: var(--color-muted);
+  font-size: 14px;
+  max-width: 60ch;
+}
+
 .award-year {
   font-family: var(--font-mono);
   color: var(--color-muted);

@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import ArticleEntry from "./ArticleEntry.astro";
+import LoadMoreList from "./LoadMoreList.astro";
 import type { Locale } from "../utils/i18n";
 
 interface Props {
@@ -10,10 +11,9 @@ interface Props {
 }
 
 const { articles, locale, pageSize = 5 } = Astro.props;
-const hasMore = articles.length > pageSize;
 ---
 
-<div class="article-list-block" data-article-list-block data-page-size={pageSize}>
+<LoadMoreList itemCount={articles.length} locale={locale} pageSize={pageSize}>
   <ul class="entry-list">
     {
       articles.map((entry, i) => (
@@ -21,27 +21,4 @@ const hasMore = articles.length > pageSize;
       ))
     }
   </ul>
-  {
-    hasMore && (
-      <button type="button" class="load-more" data-load-more>
-        {locale === "ja" ? "もっと見る" : "Show more"}
-      </button>
-    )
-  }
-</div>
-
-<script>
-  document.querySelectorAll<HTMLElement>("[data-article-list-block]").forEach((block) => {
-    const pageSize = Number(block.dataset.pageSize ?? "5");
-    const button = block.querySelector<HTMLButtonElement>("[data-load-more]");
-    if (!button) return;
-
-    button.addEventListener("click", () => {
-      const hiddenItems = Array.from(block.querySelectorAll<HTMLLIElement>("li[hidden]"));
-      hiddenItems.slice(0, pageSize).forEach((li) => li.removeAttribute("hidden"));
-      if (!block.querySelector("li[hidden]")) {
-        button.remove();
-      }
-    });
-  });
-</script>
+</LoadMoreList>

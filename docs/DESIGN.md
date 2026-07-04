@@ -876,6 +876,8 @@ const awards = defineCollection({
 - `showInNews: true` の場合、Newsに自動表示
 - `url` が設定されている場合、受賞タイトルをその `url` へのハイパーリンクとして表示する
 - `url` が省略・`null` の場合、受賞タイトルはプレーンテキストとして表示する（リンク化しない）
+- `description` が設定されている場合、タイトル・団体名の下に表示する
+- 表示件数は日付の降順で先頭5件のみとし、6件を超える場合は「もっと見る」ボタンで5件ずつ追加表示する（Articlesの一覧ページと同じ`LoadMoreList.astro`を使用。12.6節・12.9節）。Awardsには専用の一覧ページ（`/ja/awards`）がまだ無いため、この「もっと見る」はトップページのAwardsセクション自体に付く
 
 ---
 
@@ -1034,6 +1036,7 @@ portfolio-site/
 │   │   ├── Bio.astro
 │   │   ├── ArticleEntry.astro
 │   │   ├── ArticleList.astro
+│   │   ├── LoadMoreList.astro
 │   │   ├── PaperList.astro
 │   │   ├── AwardsList.astro
 │   │   └── LanguageSwitcher.astro
@@ -1169,13 +1172,21 @@ GitHub / X / LinkedIn / Zenn / Email
 
 役割。
 
-- `ArticleEntry.astro` を並べた `<ul class="entry-list">` を描画する
+- `ArticleEntry.astro` を並べた `<ul class="entry-list">` を、`LoadMoreList.astro`（12.7節）でラップして描画する
 - 表示件数（既定5件）を超える記事は `hidden` 付きで一緒にレンダリングしておき、「もっと見る」ボタンで5件ずつ表示する（6.4.2節）
-- 全記事が既にHTMLに含まれているため、ボタンのクリックはvanilla JSでの`hidden`属性の付け外しのみで完結する。サーバー通信は発生しない
-- 隠れている項目が無くなったらボタンごと消す
 - `/ja/articles` `/en/articles` の一覧ページで使用する。トップページの「Selected Articles」は5件で打ち切って「すべての記事を見る」リンクを出すだけなので、このコンポーネントは使わない（12.2節Heroとは別に、ページ側で直接`<ul class="entry-list">`を組み立てる）
 
-### 12.7 PaperList.astro
+### 12.7 LoadMoreList.astro
+
+役割。
+
+- 「表示件数を超えた分は`hidden`付きで一緒にレンダリングしておき、『もっと見る』ボタンで指定件数（`pageSize`, 既定5）ずつ表示する」という挙動を、リストの種類に依存せず提供する共通コンポーネント
+- 中身（`<ul>`とその`<li>`群）は呼び出し側が`<slot />`経由で渡す。各`<li>`側で`i >= pageSize`のとき`hidden`を付けるのは呼び出し側の責務
+- 全項目が既にHTMLに含まれているため、ボタンのクリックはvanilla JSでの`hidden`属性の付け外しのみで完結する。サーバー通信は発生しない
+- 隠れている項目が無くなったらボタンごと消す
+- `ArticleList.astro`（12.6節）と`AwardsList.astro`（12.9節）の両方から利用する
+
+### 12.8 PaperList.astro
 
 役割。
 
@@ -1186,7 +1197,7 @@ GitHub / X / LinkedIn / Zenn / Email
 - その他の paper links（pdf / code / project / bibtex）を表示
 - 枠のないリスト表示（左のアクセント罫線）で描画する。トピックタグは表示しない
 
-### 12.8 AwardsList.astro
+### 12.9 AwardsList.astro
 
 役割。
 
@@ -1194,8 +1205,10 @@ GitHub / X / LinkedIn / Zenn / Email
 - 0件なら非表示
 - `url` が設定されている場合、タイトルを外部ページへのリンクとして描画
 - `url` が無い場合、タイトルをプレーンテキストとして描画
+- `description` が設定されている場合、タイトル・団体名の下に表示する
+- `LoadMoreList.astro`（12.7節）でラップし、6件を超える場合は「もっと見る」で5件ずつ追加表示する
 
-### 12.9 Footer.astro
+### 12.10 Footer.astro
 
 役割。
 
@@ -1698,6 +1711,7 @@ src/components/NewsList.astro
 src/components/Bio.astro
 src/components/ArticleEntry.astro
 src/components/ArticleList.astro
+src/components/LoadMoreList.astro
 src/components/PaperList.astro
 src/components/AwardsList.astro
 src/components/LanguageSwitcher.astro
@@ -1763,6 +1777,7 @@ git push origin main
 - `showInNews: true` にすると News に表示される
 - Papers の `doi` / `arxivId` を設定すると、リンク付きで表示される
 - Award の `url` を設定するとタイトルがリンクになり、未設定だとプレーンテキストになる
+- Awardsが6件を超えると「もっと見る」ボタンが表示され、クリックで5件ずつ追加表示される
 - `pnpm run check:articles` が日英ペア欠けを警告として出力する
 - 記事詳細ページに `hreflang` タグが正しく出力される（対訳が無い場合は自身の言語のみ）
 - 記事に `url` を設定すると、一覧・トップページ・Newsのタイトルが外部リンクになり、サイト内の記事詳細ページは生成されない

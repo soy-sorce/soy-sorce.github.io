@@ -1,0 +1,39 @@
+---
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  itemCount: number;
+  locale: Locale;
+  pageSize?: number;
+}
+
+const { itemCount, locale, pageSize = 5 } = Astro.props;
+const hasMore = itemCount > pageSize;
+---
+
+<div class="load-more-block" data-load-more-block data-page-size={pageSize}>
+  <slot />
+  {
+    hasMore && (
+      <button type="button" class="load-more" data-load-more>
+        {locale === "ja" ? "もっと見る" : "Show more"}
+      </button>
+    )
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-load-more-block]").forEach((block) => {
+    const pageSize = Number(block.dataset.pageSize ?? "5");
+    const button = block.querySelector<HTMLButtonElement>("[data-load-more]");
+    if (!button) return;
+
+    button.addEventListener("click", () => {
+      const hiddenItems = Array.from(block.querySelectorAll<HTMLLIElement>("li[hidden]"));
+      hiddenItems.slice(0, pageSize).forEach((li) => li.removeAttribute("hidden"));
+      if (!block.querySelector("li[hidden]")) {
+        button.remove();
+      }
+    });
+  });
+</script>
