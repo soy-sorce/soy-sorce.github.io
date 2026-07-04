@@ -1160,6 +1160,7 @@ GitHub / X / LinkedIn / Zenn / Email
 役割。
 
 - 箇条書きで略歴を表示
+- `links.yml` の LinkedIn URL が設定されている場合、箇条書きの下に「more →」（日英共通、翻訳しない）のリンクを表示する。LinkedIn URLが空の場合は表示しない
 
 ### 12.5 ArticleEntry.astro
 
