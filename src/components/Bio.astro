@@ -1,5 +1,5 @@
 ---
-import { getBio } from "../utils/profile";
+import { getBio, getLinks } from "../utils/profile";
 import type { Locale } from "../utils/i18n";
 
 interface Props {
@@ -8,6 +8,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const bio = getBio()[locale];
+const links = getLinks();
 ---
 
 {
@@ -20,6 +21,11 @@ const bio = getBio()[locale];
             <li>{line}</li>
           ))}
         </ul>
+        {links.linkedin.url && (
+          <p class="view-all">
+            <a href={links.linkedin.url}>more →</a>
+          </p>
+        )}
       </div>
     </section>
   )

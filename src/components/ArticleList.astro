@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ArticleEntry from "./ArticleEntry.astro";
+import LoadMoreList from "./LoadMoreList.astro";
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  articles: CollectionEntry<"articles">[];
+  locale: Locale;
+  pageSize?: number;
+}
+
+const { articles, locale, pageSize = 5 } = Astro.props;
+---
+
+<LoadMoreList itemCount={articles.length} locale={locale} pageSize={pageSize}>
+  <ul class="entry-list">
+    {
+      articles.map((entry, i) => (
+        <ArticleEntry entry={entry} locale={locale} hidden={i >= pageSize} />
+      ))
+    }
+  </ul>
+</LoadMoreList>

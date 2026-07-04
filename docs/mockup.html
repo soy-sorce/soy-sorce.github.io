@@ -1,0 +1,822 @@
+<!--
+  ポートフォリオサイト モックアップ（単一HTMLファイル）
+  docs/DESIGN.md のトークン（配色・レイアウト・セクション構成）に基づく完成イメージ。
+  本番はAstro + Content Layer APIで構築するが、このファイルは見た目確認用の静的モック。
+  ブラウザで直接開いて確認できる（file:// でも動作する自己完結ファイル）。
+-->
+<title>Shohei Ichioka — Portfolio (Mockup)</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    /* docs/DESIGN.md 4.2 カラートークン（そのまま採用） */
+    --color-bg: #ffffff;
+    --color-bg-soft: #f8f7fb;
+    --color-text: #17151f;
+    --color-muted: #666276;
+    --color-border: #e7e2f2;
+    --color-accent: #4b00c8;
+    --color-accent-light: #843bf8;
+    --color-link: #4b00c8;
+
+    /* 補助トークン（DESIGN.mdの隙間を埋める最小限の追加） */
+    --color-accent-tint: #f2ecfb;
+
+    /* docs/DESIGN.md 4.3 レイアウト基本値（そのまま採用） */
+    --container-width: 880px;
+    --section-gap: 72px;
+    --radius-card: 18px;
+
+    /* タイポグラフィ: 研究者らしい論文的セリフ見出し + 可読なサンズ本文 + データ用モノスペース */
+    --font-display: "Hiragino Mincho ProN", "Yu Mincho", "Times New Roman", ui-serif, Georgia, serif;
+    --font-body: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  a {
+    color: var(--color-link);
+  }
+
+  .container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 14px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-light);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Header ---------- */
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(140%) blur(6px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+  }
+
+  .brand:hover {
+    color: var(--color-accent);
+  }
+
+  .main-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .main-nav a {
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .main-nav a:hover {
+    color: var(--color-text);
+    border-bottom-color: var(--color-accent-light);
+  }
+
+  .lang-toggle,
+  .menu-toggle {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    background: var(--color-accent-tint);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+
+  .lang-toggle:hover {
+    background: var(--color-border);
+  }
+
+  .menu-toggle {
+    display: none;
+    padding: 8px 10px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+  }
+
+  .menu-toggle .bar {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--color-text);
+    margin: 3px 0;
+  }
+
+  /* ---------- Sections ---------- */
+
+  main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  section {
+    padding: var(--section-gap) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  section:last-of-type {
+    border-bottom: none;
+  }
+
+  section.soft {
+    background: var(--color-bg-soft);
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    padding-top: 88px;
+    padding-bottom: 88px;
+  }
+
+  .hero-id {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+    margin: 0 0 18px;
+  }
+
+  .hero-id::before {
+    content: "@";
+    color: var(--color-accent-light);
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 44px);
+    line-height: 1.25;
+    margin-bottom: 20px;
+  }
+
+  .hero-lines {
+    list-style: none;
+    margin: 0 0 32px;
+    padding: 0;
+    max-width: 60ch;
+  }
+
+  .hero-lines li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--color-muted);
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .hero-lines li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-accent-light);
+  }
+
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+  }
+
+  .link-row a {
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .link-row a:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent-light);
+  }
+
+  .link-row .sep {
+    color: var(--color-border);
+  }
+
+  /* ---------- News ---------- */
+
+  .news-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 68ch;
+  }
+
+  .news-list li {
+    display: grid;
+    grid-template-columns: 96px 78px 1fr;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .news-list li:first-child {
+    border-top: none;
+  }
+
+  .news-date {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  .news-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    background: var(--color-accent-tint);
+    border-radius: 999px;
+    padding: 2px 9px;
+    width: fit-content;
+    text-transform: uppercase;
+  }
+
+  .news-text a {
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-accent-light);
+  }
+
+  .news-text a:hover {
+    color: var(--color-accent);
+  }
+
+  .news-text span[data-i18n] {
+    color: var(--color-text);
+  }
+
+  /* ---------- Bio / Interests ---------- */
+
+  .bio-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 60ch;
+  }
+
+  .bio-list li {
+    padding: 12px 0 12px 18px;
+    border-left: 2px solid var(--color-border);
+    margin-bottom: 4px;
+  }
+
+  .bio-period {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+    margin-bottom: 2px;
+  }
+
+  /* ---------- Entries (Articles / Papers) ---------- */
+
+  .entry-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 68ch;
+  }
+
+  .entry-list li {
+    padding: 22px 0 22px 20px;
+    border-left: 2px solid var(--color-border);
+    margin-bottom: 6px;
+    transition: border-color 0.15s ease;
+  }
+
+  .entry-list li:hover {
+    border-left-color: var(--color-accent-light);
+  }
+
+  .entry-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+    margin: 0 0 8px;
+  }
+
+  .entry-title {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+
+  .entry-desc {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 15px;
+  }
+
+  .entry-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .entry-links a {
+    text-decoration: none;
+    color: var(--color-accent);
+    border-bottom: 1px solid transparent;
+  }
+
+  .entry-links a:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .paper-category {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin: 0 0 14px;
+    padding-top: 4px;
+  }
+
+  .paper-authors .self {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .paper-authors {
+    font-size: 15px;
+    color: var(--color-muted);
+    margin: 0 0 6px;
+  }
+
+  /* ---------- Awards ---------- */
+
+  .award-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 68ch;
+  }
+
+  .award-list li {
+    padding: 18px 0;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .award-list li:first-child {
+    border-top: none;
+  }
+
+  .award-main .award-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  a.award-title {
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-accent-light);
+  }
+
+  a.award-title:hover {
+    color: var(--color-accent);
+  }
+
+  .award-org {
+    display: block;
+    color: var(--color-muted);
+    font-size: 14px;
+    margin-top: 3px;
+  }
+
+  .award-year {
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Footer ---------- */
+
+  .site-footer {
+    padding: 48px 0 64px;
+  }
+
+  .site-footer .link-row {
+    margin-bottom: 18px;
+  }
+
+  .copyright {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+
+  /* ---------- Responsive ---------- */
+
+  @media (max-width: 720px) {
+    .menu-toggle {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .main-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 12px 24px 18px;
+      display: none;
+    }
+
+    .main-nav.is-open {
+      display: flex;
+    }
+
+    .main-nav a {
+      width: 100%;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .lang-toggle {
+      order: 10;
+      margin-top: 6px;
+    }
+
+    .news-list li {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#top">Shohei Ichioka</a>
+    <nav class="main-nav" id="main-nav">
+      <a href="#articles"><span data-i18n="ja">記事</span><span data-i18n="en" hidden>Articles</span></a>
+      <a href="#papers"><span data-i18n="ja">論文</span><span data-i18n="en" hidden>Papers</span></a>
+      <a href="#awards"><span data-i18n="ja">受賞</span><span data-i18n="en" hidden>Awards</span></a>
+      <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Switch language">EN</button>
+    </nav>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="container">
+      <p class="hero-id">soy-sorce</p>
+      <h1>Shohei Ichioka</h1>
+      <ul class="hero-lines">
+        <li data-i18n="ja">一橋大学ソーシャル・データサイエンス学部。欅研究室所属。</li>
+        <li data-i18n="en" hidden>
+          Undergraduate student at the School of Social Data Science, Hitotsubashi University. Member of Keyaki Lab.
+        </li>
+        <li data-i18n="ja">NII 技術補佐員。</li>
+        <li data-i18n="en" hidden>Technical Assistant at NII.</li>
+        <li data-i18n="ja">llm-jp コーパス構築ワーキンググループ所属。</li>
+        <li data-i18n="en" hidden>Member of the llm-jp Corpus Construction Working Group.</li>
+        <li data-i18n="ja">研究関心: 情報検索（IR）、自然言語処理（NLP）、行政学</li>
+        <li data-i18n="en" hidden
+          >Research interests: Information Retrieval, Natural Language Processing, Public Administration</li
+        >
+      </ul>
+      <div class="link-row">
+        <a href="https://github.com/soy-sorce">GitHub</a>
+        <span class="sep" aria-hidden="true">/</span>
+        <a href="https://x.com/SIchioka_0623">X</a>
+        <span class="sep" aria-hidden="true">/</span>
+        <a href="https://www.linkedin.com/in/shohei-ichioka-b93806358/">LinkedIn</a>
+        <span class="sep" aria-hidden="true">/</span>
+        <a href="https://zenn.dev/pepepepepepepe">Zenn</a>
+        <span class="sep" aria-hidden="true">/</span>
+        <a href="mailto:ichi.shouhei44en@gmail.com">ichi.shouhei44en [at] gmail.com</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- News -->
+  <section class="soft" id="news-section">
+    <div class="container">
+      <p class="eyebrow">News</p>
+      <ul class="news-list">
+        <li>
+          <span class="news-date">2026-07-04</span>
+          <span class="news-tag">Update</span>
+          <span class="news-text">
+            <a href="#top">
+              <span data-i18n="ja">ポートフォリオサイトを公開しました。</span>
+              <span data-i18n="en" hidden>Launched my portfolio website.</span>
+            </a>
+          </span>
+        </li>
+        <li>
+          <span class="news-date">2026-06-20</span>
+          <span class="news-tag">Paper</span>
+          <span class="news-text">
+            <span data-i18n="ja">プレプリントを公開しました。</span>
+            <span data-i18n="en" hidden>Published a preprint.</span>
+          </span>
+        </li>
+        <li>
+          <span class="news-date">2026-06-01</span>
+          <span class="news-tag">Article</span>
+          <span class="news-text">
+            <a href="#articles">
+              <span data-i18n="ja">記事『BM25 + MMR 検索パイプラインの設計』を公開しました。</span>
+              <span data-i18n="en" hidden>Published article: Designing a BM25 + MMR Retrieval Pipeline.</span>
+            </a>
+          </span>
+        </li>
+        <li>
+          <span class="news-date">2026-05-10</span>
+          <span class="news-tag">Award</span>
+          <span class="news-text">
+            <span data-i18n="ja">サンプル受賞を追加しました。</span>
+            <span data-i18n="en" hidden>Added a sample award.</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Bio -->
+  <section id="bio">
+    <div class="container">
+      <p class="eyebrow">Bio</p>
+      <ul class="bio-list">
+        <li>
+          <span class="bio-period">2023 —</span>
+          <span data-i18n="ja">一橋大学 ソーシャル・データサイエンス学部</span>
+          <span data-i18n="en" hidden>School of Social Data Science, Hitotsubashi University</span>
+        </li>
+        <li>
+          <span class="bio-period">2026 (planned)</span>
+          <span data-i18n="ja">York University（交換留学予定, Canada）</span>
+          <span data-i18n="en" hidden>York University (Exchange, Canada)</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Selected Articles -->
+  <section class="soft" id="articles">
+    <div class="container">
+      <p class="eyebrow">Selected Articles</p>
+      <ul class="entry-list">
+        <li>
+          <p class="entry-meta">2026-06-01</p>
+          <h3 class="entry-title">
+            <span data-i18n="ja">BM25 + MMR 検索パイプラインの設計</span>
+            <span data-i18n="en" hidden>Designing a BM25 + MMR Retrieval Pipeline</span>
+          </h3>
+          <p class="entry-desc">
+            <span data-i18n="ja">BM25検索とMMRリランキングを組み合わせた検索パイプラインの設計メモ。</span>
+            <span data-i18n="en" hidden
+              >Design notes on a retrieval pipeline combining BM25 search with MMR re-ranking.</span
+            >
+          </p>
+        </li>
+        <li>
+          <p class="entry-meta">2026-04-12</p>
+          <h3 class="entry-title">
+            <span data-i18n="ja">llm-jp コーパス構築ワーキンググループでの活動記録</span>
+            <span data-i18n="en" hidden>Notes from the llm-jp Corpus Construction Working Group</span>
+          </h3>
+          <p class="entry-desc">
+            <span data-i18n="ja"
+              >大規模日本語コーパス構築における前処理・品質フィルタリングの知見をまとめました。</span
+            >
+            <span data-i18n="en" hidden
+              >Notes on preprocessing and quality filtering learned while building a large-scale Japanese
+              corpus.</span
+            >
+          </p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Selected Papers -->
+  <section id="papers">
+    <div class="container">
+      <p class="eyebrow">Selected Papers</p>
+      <p class="paper-category">
+        <span data-i18n="ja">プレプリント</span><span data-i18n="en" hidden>Preprints</span>
+      </p>
+      <ul class="entry-list">
+        <li>
+          <p class="entry-meta">2026 · arXiv</p>
+          <h3 class="entry-title">
+            <span data-i18n="ja">サンプル論文タイトル</span>
+            <span data-i18n="en" hidden>Sample Paper Title</span>
+          </h3>
+          <p class="paper-authors">
+            <span class="self">Shohei Ichioka</span><span>, Coauthor Name</span>
+          </p>
+          <p class="entry-desc">
+            <span data-i18n="ja">論文の短い説明。</span>
+            <span data-i18n="en" hidden>Short description of the paper.</span>
+          </p>
+          <div class="entry-links">
+            <a href="#papers">PDF</a>
+            <a href="https://doi.org/10.1234/example.2026">DOI: 10.1234/example.2026</a>
+            <a href="https://arxiv.org/abs/2607.00000">arXiv:2607.00000</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Awards -->
+  <section class="soft" id="awards">
+    <div class="container">
+      <p class="eyebrow">Awards</p>
+      <ul class="award-list">
+        <li>
+          <div class="award-main">
+            <a class="award-title" href="https://example.org/news/award-announcement">
+              <span data-i18n="ja">サンプル受賞</span><span data-i18n="en" hidden>Sample Award</span>
+            </a>
+            <span class="award-org">
+              <span data-i18n="ja">主催団体</span><span data-i18n="en" hidden>Organization</span>
+            </span>
+          </div>
+          <span class="award-year">2026</span>
+        </li>
+        <li>
+          <div class="award-main">
+            <span class="award-title">
+              <span data-i18n="ja">サンプル受賞2</span><span data-i18n="en" hidden>Sample Award 2</span>
+            </span>
+            <span class="award-org">
+              <span data-i18n="ja">主催団体</span><span data-i18n="en" hidden>Organization</span>
+            </span>
+          </div>
+          <span class="award-year">2025</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="link-row">
+      <a href="mailto:ichi.shouhei44en@gmail.com">ichi.shouhei44en [at] gmail.com</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <a href="https://github.com/soy-sorce">GitHub</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <a href="https://x.com/SIchioka_0623">X</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <a href="https://www.linkedin.com/in/shohei-ichioka-b93806358/">LinkedIn</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <a href="https://zenn.dev/pepepepepepepe">Zenn</a>
+    </div>
+    <p class="copyright">© 2026 Shohei Ichioka</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var current = "ja";
+
+    function applyLang(lang) {
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        el.hidden = el.getAttribute("data-i18n") !== lang;
+      });
+      document.documentElement.setAttribute("lang", lang);
+      var toggle = document.getElementById("lang-toggle");
+      toggle.textContent = lang === "ja" ? "EN" : "JA";
+      toggle.setAttribute("aria-label", lang === "ja" ? "Switch to English" : "日本語に切り替え");
+    }
+
+    document.getElementById("lang-toggle").addEventListener("click", function () {
+      current = current === "ja" ? "en" : "ja";
+      applyLang(current);
+    });
+
+    applyLang(current);
+
+    var nav = document.getElementById("main-nav");
+    var menuBtn = document.getElementById("menu-toggle");
+
+    menuBtn.addEventListener("click", function () {
+      var open = nav.classList.toggle("is-open");
+      menuBtn.setAttribute("aria-expanded", String(open));
+    });
+
+    nav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        nav.classList.remove("is-open");
+      });
+    });
+  })();
+</script>

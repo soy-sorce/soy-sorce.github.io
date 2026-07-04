@@ -7,13 +7,15 @@ import Bio from "../../components/Bio.astro";
 import ArticleEntry from "../../components/ArticleEntry.astro";
 import PaperList from "../../components/PaperList.astro";
 import AwardsList from "../../components/AwardsList.astro";
-import { getArticlesByLocale } from "../../utils/articles";
+import { getArticlesByLocale, sortArticles } from "../../utils/articles";
 
 const locale = "ja" as const;
+const HOME_ARTICLES_LIMIT = 5;
 
-const selectedArticles = (await getArticlesByLocale(locale))
-  .filter((entry) => entry.data.selected)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const selectedArticles = sortArticles(
+  (await getArticlesByLocale(locale)).filter((entry) => entry.data.selected)
+);
+const visibleSelectedArticles = selectedArticles.slice(0, HOME_ARTICLES_LIMIT);
 
 const selectedPapers = (await getCollection("papers")).filter((entry) => entry.data.selected);
 const selectedAwards = (await getCollection("awards")).filter((entry) => entry.data.selected);
@@ -29,10 +31,15 @@ const selectedAwards = (await getCollection("awards")).filter((entry) => entry.d
         <div class="container">
           <p class="eyebrow">Selected Articles</p>
           <ul class="entry-list">
-            {selectedArticles.map((entry) => (
+            {visibleSelectedArticles.map((entry) => (
               <ArticleEntry entry={entry} locale={locale} />
             ))}
           </ul>
+          {selectedArticles.length > HOME_ARTICLES_LIMIT && (
+            <p class="view-all">
+              <a href={`/${locale}/articles/`}>すべての記事を見る →</a>
+            </p>
+          )}
         </div>
       </section>
     )
