@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { getSlugFromId } from "../utils/articles";
+import { getArticleHref, isExternalArticle } from "../utils/articles";
 import type { Locale } from "../utils/i18n";
 
 interface Props {
@@ -9,15 +9,23 @@ interface Props {
 }
 
 const { entry, locale } = Astro.props;
-const slug = getSlugFromId(entry.id);
-const href = `/${locale}/articles/${slug}/`;
+const href = getArticleHref(entry, locale);
+const external = isExternalArticle(entry);
 const dateLabel = entry.data.date.toISOString().slice(0, 10);
 ---
 
 <li>
   <p class="entry-meta">{dateLabel}</p>
   <h3 class="entry-title">
-    <a href={href}>{entry.data.title}</a>
+    {
+      external ? (
+        <a href={href} target="_blank" rel="noopener noreferrer">
+          {entry.data.title} ↗
+        </a>
+      ) : (
+        <a href={href}>{entry.data.title}</a>
+      )
+    }
   </h3>
   {entry.data.description && <p class="entry-desc">{entry.data.description}</p>}
 </li>

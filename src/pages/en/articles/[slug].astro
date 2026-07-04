@@ -1,11 +1,16 @@
 ---
 import { render, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { getArticlesByLocale, getArticleCounterpart, getSlugFromId } from "../../../utils/articles";
+import {
+  getArticlesByLocale,
+  getArticleCounterpart,
+  getSlugFromId,
+  isExternalArticle,
+} from "../../../utils/articles";
 import { getAlternatePath } from "../../../utils/i18n";
 
 export async function getStaticPaths() {
-  const articles = await getArticlesByLocale("en");
+  const articles = (await getArticlesByLocale("en")).filter((entry) => !isExternalArticle(entry));
   return articles.map((entry) => ({
     params: { slug: getSlugFromId(entry.id) },
     props: { entry },
@@ -20,7 +25,8 @@ const { entry }: Props = Astro.props;
 const locale = "en" as const;
 const slug = getSlugFromId(entry.id);
 const { Content } = await render(entry);
-const counterpart = await getArticleCounterpart(locale, slug);
+const rawCounterpart = await getArticleCounterpart(locale, slug);
+const counterpart = rawCounterpart && !isExternalArticle(rawCounterpart) ? rawCounterpart : undefined;
 const dateLabel = entry.data.date.toISOString().slice(0, 10);
 ---
 
