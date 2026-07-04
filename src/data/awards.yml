@@ -1,1 +1,15 @@
-[]
+- id: "GDGoC Hackathon 2026"
+  selected: true
+  date: "2026-04-01"
+  year: 2026
+  title:
+    ja: "LGTM 賞 他"
+    en: "LGTM Prize etc."
+  organization:
+    ja: "Google Developer Groups on Campus"
+    en: "Google Developer Groups on Campus"
+  description:
+    ja: "参加者350名を超える大規模ハッカソンで予選をトップ通過し、Google japan 渋谷オフィスでピッチしました！"
+    en: "We advanced through the preliminary round in first place at a large-scale hackathon with over 350 participants and pitched at Google Japan’s Shibuya office!"
+  url: "https://gdg.community.dev/events/details/google-gdg-on-campus-university-of-aizu-fukushima-japan-presents-gdgoc-japan-hackathon/"
+  showInNews: false
