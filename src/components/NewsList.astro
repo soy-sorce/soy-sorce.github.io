@@ -1,0 +1,29 @@
+---
+import { getNewsItems } from "../utils/news";
+import type { Locale } from "../utils/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const items = await getNewsItems(locale);
+---
+
+{
+  items.length > 0 && (
+    <section class="soft" id="news">
+      <div class="container">
+        <p class="eyebrow">News</p>
+        <ul class="news-list">
+          {items.map((item) => (
+            <li>
+              <span class="news-date">{item.date}</span>
+              <span class="news-text">{item.url ? <a href={item.url}>{item.text}</a> : item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

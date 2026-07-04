@@ -1,0 +1,33 @@
+---
+import { getAlternatePath, getOtherLocale, type Locale } from "../utils/i18n";
+
+interface Props {
+  locale: Locale;
+  pathname: string;
+}
+
+const { locale, pathname } = Astro.props;
+const otherLocale = getOtherLocale(locale);
+const href = getAlternatePath(pathname, otherLocale);
+---
+
+<a class="lang-switch" href={href}>{otherLocale.toUpperCase()}</a>
+
+<style>
+  .lang-switch {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    background: var(--color-accent-tint);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    text-decoration: none;
+  }
+
+  .lang-switch:hover {
+    background: var(--color-border);
+  }
+</style>

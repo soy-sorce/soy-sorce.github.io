@@ -1,0 +1,56 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { getAlternatePath, type Locale } from "../utils/i18n";
+import "../styles/global.css";
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description?: string;
+  hasAlternate?: boolean;
+}
+
+const { locale, title, description, hasAlternate = true } = Astro.props;
+const pathname = Astro.url.pathname;
+const canonicalUrl = new URL(pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalUrl} />
+    {
+      hasAlternate && (
+        <>
+          <link
+            rel="alternate"
+            hreflang="ja"
+            href={new URL(getAlternatePath(pathname, "ja"), Astro.site)}
+          />
+          <link
+            rel="alternate"
+            hreflang="en"
+            href={new URL(getAlternatePath(pathname, "en"), Astro.site)}
+          />
+          <link
+            rel="alternate"
+            hreflang="x-default"
+            href={new URL(getAlternatePath(pathname, "ja"), Astro.site)}
+          />
+        </>
+      )
+    }
+  </head>
+  <body>
+    <Header locale={locale} pathname={pathname} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

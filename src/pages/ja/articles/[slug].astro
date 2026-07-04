@@ -1,0 +1,49 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getArticlesByLocale, getArticleCounterpart, getSlugFromId } from "../../../utils/articles";
+import { getAlternatePath } from "../../../utils/i18n";
+
+export async function getStaticPaths() {
+  const articles = await getArticlesByLocale("ja");
+  return articles.map((entry) => ({
+    params: { slug: getSlugFromId(entry.id) },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"articles">;
+}
+
+const { entry }: Props = Astro.props;
+const locale = "ja" as const;
+const slug = getSlugFromId(entry.id);
+const { Content } = await render(entry);
+const counterpart = await getArticleCounterpart(locale, slug);
+const dateLabel = entry.data.date.toISOString().slice(0, 10);
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${entry.data.title} - Shohei Ichioka`}
+  description={entry.data.description}
+  hasAlternate={Boolean(counterpart)}
+>
+  <article>
+    <div class="container">
+      <p class="entry-meta">{dateLabel}</p>
+      <h1>{entry.data.title}</h1>
+      <div class="article-body">
+        <Content />
+      </div>
+      {
+        counterpart && (
+          <p class="lang-note">
+            <a href={getAlternatePath(Astro.url.pathname, "en")}>Read in English</a>
+          </p>
+        )
+      }
+    </div>
+  </article>
+</BaseLayout>
