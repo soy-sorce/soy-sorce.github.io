@@ -1,16 +1,16 @@
 name:
-  ja: "Shohei Ichioka"
+  ja: "市岡 奨平"
   en: "Shohei Ichioka"
 
 headline:
-  ja: "一橋大学ソーシャル・データサイエンス学部。欅研究室所属。"
+  ja: "一橋大学ソーシャル・データサイエンス学部. 欅研究室所属"
   en: "Undergraduate student at the School of Social Data Science, Hitotsubashi University. Member of Keyaki Lab."
 
 hero:
   ja:
-    - "一橋大学ソーシャル・データサイエンス学部。欅研究室所属。"
-    - "NII 技術補佐員。"
-    - "llm-jp コーパス構築ワーキンググループ所属。"
+    - "一橋大学ソーシャル・データサイエンス学部. 欅研究室所属"
+    - "NII 技術補佐員"
+    - "llm-jp コーパス構築ワーキンググループ所属"
   en:
     - "Undergraduate student at the School of Social Data Science, Hitotsubashi University. Member of Keyaki Lab."
     - "Technical Assistant at NII."
