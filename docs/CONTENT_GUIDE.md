@@ -37,6 +37,9 @@ education:
     institution:
       ja: "一橋大学 ソーシャル・データサイエンス学部"
       en: "School of Social Data Science, Hitotsubashi University"
+    description:
+      ja: "学部での学習内容や活動の説明。"
+      en: "Description of coursework or activities."
 
 work:
   - startYear: 2025
@@ -55,7 +58,7 @@ work:
 
 - `startYear` / `endYear` は数値（必須）。表示時に `[2024 ~ 2028]` の形式へ自動整形される。`endYear` を省略するか `null` にすると「現在」（英語版は `Present`）になる
 - `startMonth` / `endMonth` は任意（1〜12）。指定すると `2024-04` のように年月表示になり、省略すると今まで通り年のみの表示になる。片方だけ月を付ける、一部のエントリだけ月無しにする、といった混在も可能
-- `education` は学校名（`institution`）のみ。`work` は会社名（`company`）・役職名（`title`。会社名と同格で表示される）・説明文（`description`、必須）を持つ
+- `education` は学校名（`institution`）と説明文（`description`、必須）を持つ。`work` は会社名（`company`）・役職名（`title`。会社名と同格で表示される）・説明文（`description`、必須）を持つ
 - どちらも配列なので、上に新しい項目を追加すればそのまま表示件数が増える（自動ソートはしないので、表示したい順に並べる）
 
 ### `src/data/interests.yml`

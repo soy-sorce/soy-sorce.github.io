@@ -63,7 +63,7 @@ h3 {
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -216,7 +216,7 @@ section.soft {
 
 .bio-group-label {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -269,10 +269,10 @@ section.soft {
   color: var(--color-text);
 }
 
-.bio-work-desc {
+.bio-desc {
   margin: 6px 0 0;
   color: var(--color-text);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 /* ---------- Entries (Articles / Papers) ---------- */
@@ -319,7 +319,7 @@ section.soft {
 
 .entry-desc {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-text);
   font-size: 14px;
 }
 
@@ -392,7 +392,7 @@ section.soft {
 
 .paper-category {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -414,60 +414,17 @@ section.soft {
 
 /* ---------- Awards ---------- */
 
-.award-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-width: 68ch;
-}
-
-.award-list li {
-  padding: 18px 0;
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.award-list li:first-child {
-  border-top: none;
-}
-
-.award-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-a.award-title {
-  color: var(--color-text);
-  text-decoration: none;
-  border-bottom: 1px solid var(--color-accent-light);
-}
-
-a.award-title:hover {
-  color: var(--color-accent);
-}
-
 .award-org {
-  display: block;
+  margin: 0 0 6px;
   color: var(--color-muted);
-  font-size: 14px;
-  margin-top: 3px;
+  font-size: 15px;
 }
 
 .award-desc {
-  margin: 8px 0 0;
+  margin: 0;
   color: var(--color-text);
   font-size: 14px;
   max-width: 60ch;
-}
-
-.award-year {
-  font-family: var(--font-mono);
-  color: var(--color-muted);
-  font-size: 13px;
-  white-space: nowrap;
 }
 
 /* ---------- Footer ---------- */

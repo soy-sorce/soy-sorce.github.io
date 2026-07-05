@@ -30,6 +30,7 @@ const workLabel = locale === "ja" ? "職歴" : "Work";
                       {formatBioPeriod(entry.startYear, entry.startMonth, entry.endYear, entry.endMonth, locale)}
                     </p>
                     <p class="bio-name">{entry.institution[locale]}</p>
+                    <p class="bio-desc">{entry.description[locale]}</p>
                   </li>
                 ))}
               </ul>
@@ -45,7 +46,7 @@ const workLabel = locale === "ja" ? "職歴" : "Work";
                       {formatBioPeriod(entry.startYear, entry.startMonth, entry.endYear, entry.endMonth, locale)}
                     </p>
                     <p class="bio-work-role">{entry.company[locale]} — {entry.title[locale]}</p>
-                    <p class="bio-work-desc">{entry.description[locale]}</p>
+                    <p class="bio-desc">{entry.description[locale]}</p>
                   </li>
                 ))}
               </ul>

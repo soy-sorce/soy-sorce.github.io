@@ -48,3 +48,22 @@ const href = getAlternatePath(pathname, otherLocale);
     color: var(--color-accent);
   }
 </style>
+
+<script>
+  const SCROLL_STORAGE_KEY = "lang-switch-scroll-pct";
+
+  document.querySelectorAll<HTMLAnchorElement>(".lang-other").forEach((link) => {
+    link.addEventListener("click", () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? window.scrollY / scrollable : 0;
+      sessionStorage.setItem(SCROLL_STORAGE_KEY, String(pct));
+    });
+  });
+
+  const savedPct = sessionStorage.getItem(SCROLL_STORAGE_KEY);
+  if (savedPct !== null) {
+    sessionStorage.removeItem(SCROLL_STORAGE_KEY);
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo(0, scrollable * Number(savedPct));
+  }
+</script>

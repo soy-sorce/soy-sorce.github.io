@@ -368,11 +368,17 @@ education:
     institution:
       ja: "一橋大学 ソーシャル・データサイエンス学部"
       en: "School of Social Data Science, Hitotsubashi University"
+    description:
+      ja: "学部での学習内容や活動の説明。"
+      en: "Description of coursework or activities."
   - startYear: 2026
     endYear: 2027
     institution:
       ja: "York University @カナダ（交換留学）"
       en: "York University @Canada (Exchange)"
+    description:
+      ja: "交換留学中の学習内容や活動の説明。"
+      en: "Description of coursework or activities during the exchange."
 
 work:
   - startYear: 2025
@@ -391,7 +397,7 @@ work:
 
 `startMonth`/`endMonth` は完全に任意で、片方のエントリだけ月を付けるなど混在しても構わない（2番目の学歴エントリのように月無し=年のみ表示のままでもよい）。
 
-`work` の `company` と `title` は表示上同じ太さ・サイズで並べる（会社名と役職名を同格に扱う）。`description` は必須で、役職の内容を短く説明する。
+`work` の `company` と `title` は表示上同じ太さ・サイズで並べる（会社名と役職名を同格に扱う）。`education`/`work` とも `description` は必須で、学校・役職の内容を短く説明する。表示スタイルは両者とも共通の `.bio-desc`（14px・`--color-text`）を使う。
 
 ### 5.4 Research Interests
 
@@ -886,6 +892,7 @@ const awards = defineCollection({
 - `url` が省略・`null` の場合、受賞タイトルはプレーンテキストとして表示する（リンク化しない）
 - `description` が設定されている場合、タイトル・団体名の下に表示する
 - 表示件数は日付の降順で先頭5件のみとし、6件を超える場合は「もっと見る」ボタンで5件ずつ追加表示する（`LoadMoreList.astro` を使用。12.7節・12.9節）
+- 見た目はArticles/Papers（`.entry-list`）と完全に共通の構造にする（左側の縦アクセントバー、年を `.entry-meta` として上に独立行で表示、タイトルは `.entry-title`）。Awards独自だった「上に横線＋年を右側に配置」というレイアウトは廃止し、3つのセクションで同じ型に統一する。団体名（`.award-org`）は `PaperList.astro` の著者名（`.paper-authors`）と同じ見た目（15px・グレー）にする
 
 ---
 
@@ -1163,9 +1170,10 @@ GitHub / X / LinkedIn / Zenn / Email
 
 役割。
 
-- 学歴（Education）と職歴（Work）を縦に並べて表示する（学歴グループ→職歴グループの順、常に1カラム）。各グループの見出しラベルは `PaperList.astro` のカテゴリラベルと同じ見た目（モノスペース・12px・大文字・グレー）
-- 学歴は `[期間] 学校名` の1行形式（従来通り、`.bio-list` の左ボーダー付きリスト）
+- 学歴（Education）と職歴（Work）を縦に並べて表示する（学歴グループ→職歴グループの順、常に1カラム）。各グループの見出しラベルは `PaperList.astro` のカテゴリラベルと同じ見た目（モノスペース・14px・大文字・グレー）
+- 学歴は `[期間] 学校名` の1行（`.bio-list` の左ボーダー付きリスト）、その下に説明文（`description`）を表示する
 - 職歴は `[期間] 会社名 — 役職名`（会社名・役職名は同じ太さ・サイズで並べる。学歴と同じ文字サイズ・色に統一）を1行目に、その下に説明文（`description`）を表示する
+- 学歴・職歴の説明文はいずれも共通の `.bio-desc`（14px・`--color-text`）を使う
 - 期間表記はいずれも `formatBioPeriod()` で統一する（5.3節）
 - `links.yml` の LinkedIn URL が設定されている場合、学歴・職歴グループの下に「more →」（日英共通、翻訳しない）のリンクを表示する。LinkedIn URLが空の場合は表示しない
 - 学歴・職歴がともに0件ならセクション自体を非表示にする
@@ -1220,6 +1228,7 @@ GitHub / X / LinkedIn / Zenn / Email
 
 - 全Awardsを表示
 - 0件なら非表示
+- `ArticleList.astro`/`PaperList.astro` と同じ `.entry-list` のマークアップ・スタイルを共用する（`.entry-meta` に年、`.entry-title` にタイトル、その下に団体名（`.award-org`）・説明（`.award-desc`）を続ける）。Awards独自のレイアウト（横並びflex、上部の横線区切り）は持たない
 - `url` が設定されている場合、タイトルを外部ページへのリンクとして描画
 - `url` が無い場合、タイトルをプレーンテキストとして描画
 - `description` が設定されている場合、タイトル・団体名の下に表示する

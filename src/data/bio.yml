@@ -6,6 +6,9 @@ education:
     institution:
       ja: "一橋大学 ソーシャル・データサイエンス学部"
       en: "School of Social Data Science, Hitotsubashi University"
+    description:
+      ja: "欅研究室所属"
+      en: "Member of Keyaki Lab."
   - startYear: 2026
     startMonth: 8
     endYear: 2027
@@ -13,9 +16,12 @@ education:
     institution:
       ja: "York University @カナダ（交換留学）"
       en: "York University @Canada (Exchange)"
+    description:
+      ja: "政治学部"
+      en: "The faculty of Political Science"
 
 work:
-  - startYear: 2025
+  - startYear: 2026
     startMonth: 4
     endYear: null
     company:
@@ -30,7 +36,7 @@ work:
   - startYear: 2025
     startMonth: 4
     endYear: 2026
-    endmonth: 6
+    endMonth: 6
     company:
       ja: "Memory Lab"
       en: "Memory Lab"

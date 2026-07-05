@@ -43,6 +43,7 @@ const BioPeriodSchema = z.object({
 
 const EducationEntrySchema = BioPeriodSchema.extend({
   institution: LocalizedString,
+  description: LocalizedString,
 });
 
 const WorkEntrySchema = BioPeriodSchema.extend({

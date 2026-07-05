@@ -14,24 +14,16 @@ const sorted = [...awards].sort((a, b) => b.data.date.getTime() - a.data.date.ge
 ---
 
 <LoadMoreList itemCount={sorted.length} locale={locale} pageSize={pageSize}>
-  <ul class="award-list">
+  <ul class="entry-list">
     {
       sorted.map((entry, i) => {
         const data = entry.data;
         return (
           <li hidden={i >= pageSize}>
-            <div class="award-main">
-              {data.url ? (
-                <a class="award-title" href={data.url}>
-                  {data.title[locale]}
-                </a>
-              ) : (
-                <span class="award-title">{data.title[locale]}</span>
-              )}
-              <span class="award-org">{data.organization[locale]}</span>
-              {data.description?.[locale] && <p class="award-desc">{data.description[locale]}</p>}
-            </div>
-            <span class="award-year">{data.year}</span>
+            <p class="entry-meta">{data.year}</p>
+            <h3 class="entry-title">{data.url ? <a href={data.url}>{data.title[locale]}</a> : data.title[locale]}</h3>
+            <p class="award-org">{data.organization[locale]}</p>
+            {data.description?.[locale] && <p class="award-desc">{data.description[locale]}</p>}
           </li>
         );
       })
