@@ -207,17 +207,72 @@ section.soft {
 
 /* ---------- Bio ---------- */
 
+.bio-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  max-width: 720px;
+}
+
+.bio-group-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin: 0 0 12px;
+}
+
 .bio-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-width: 60ch;
 }
 
 .bio-list li {
   padding: 12px 0 12px 18px;
   border-left: 2px solid var(--color-border);
   margin-bottom: 4px;
+}
+
+.bio-list li .entry-meta {
+  margin: 0 0 4px;
+}
+
+.bio-name {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.bio-work-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bio-work-list li {
+  padding: 12px 0 12px 18px;
+  border-left: 2px solid var(--color-border);
+  margin-bottom: 4px;
+}
+
+.bio-work-list li .entry-meta {
+  margin: 0 0 4px;
+}
+
+.bio-work-role {
+  margin: 0;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.bio-work-desc {
+  margin: 6px 0 0;
+  color: var(--color-text);
+  font-size: 16px;
 }
 
 /* ---------- Entries (Articles / Papers) ---------- */

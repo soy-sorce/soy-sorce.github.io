@@ -357,17 +357,41 @@ links:
 
 ### 5.3 Bio
 
-`src/data/bio.yml`（vite-plugin-yaml で import、方式B）
+`src/data/bio.yml`（vite-plugin-yaml で import、方式B）。学歴（`education`）と職歴（`work`）を分けて配列で持つ。期間は `startYear`/`endYear`（数値、必須）に加え、任意で `startMonth`/`endMonth`（1〜12）を持てる。表示時に `formatBioPeriod()`（`utils/profile.ts`）で整形する。月を指定すると `2024-04` のようにゼロ埋め2桁でハイフン結合し（サイト内の他の日付表記 `.entry-meta` の `YYYY-MM-DD` 形式と統一）、月を省略すると年のみ（`2024`）になる。`endYear` を省略・`null` にすると在籍中として扱われ、`現在`（en: `Present`）に自動変換される。
 
 ```yaml
-bio:
-  ja:
-    - "一橋大学 ソーシャル・データサイエンス学部"
-    - "York University（交換留学予定, Canada）"
-  en:
-    - "School of Social Data Science, Hitotsubashi University"
-    - "York University (Exchange, Canada)"
+education:
+  - startYear: 2024
+    startMonth: 4
+    endYear: 2028
+    endMonth: 3
+    institution:
+      ja: "一橋大学 ソーシャル・データサイエンス学部"
+      en: "School of Social Data Science, Hitotsubashi University"
+  - startYear: 2026
+    endYear: 2027
+    institution:
+      ja: "York University @カナダ（交換留学）"
+      en: "York University @Canada (Exchange)"
+
+work:
+  - startYear: 2025
+    startMonth: 4
+    endYear: null
+    company:
+      ja: "国立情報学研究所（NII）"
+      en: "National Institute of Informatics (NII)"
+    title:
+      ja: "技術補佐員"
+      en: "Technical Assistant"
+    description:
+      ja: "llm-jp コーパス構築ワーキンググループに所属し、大規模言語モデル学習用コーパスの構築に従事。"
+      en: "Member of the llm-jp Corpus Construction Working Group, working on building corpora for large language model training."
 ```
+
+`startMonth`/`endMonth` は完全に任意で、片方のエントリだけ月を付けるなど混在しても構わない（2番目の学歴エントリのように月無し=年のみ表示のままでもよい）。
+
+`work` の `company` と `title` は表示上同じ太さ・サイズで並べる（会社名と役職名を同格に扱う）。`description` は必須で、役職の内容を短く説明する。
 
 ### 5.4 Research Interests
 
@@ -1139,8 +1163,12 @@ GitHub / X / LinkedIn / Zenn / Email
 
 役割。
 
-- 箇条書きで略歴を表示
-- `links.yml` の LinkedIn URL が設定されている場合、箇条書きの下に「more →」（日英共通、翻訳しない）のリンクを表示する。LinkedIn URLが空の場合は表示しない
+- 学歴（Education）と職歴（Work）を縦に並べて表示する（学歴グループ→職歴グループの順、常に1カラム）。各グループの見出しラベルは `PaperList.astro` のカテゴリラベルと同じ見た目（モノスペース・12px・大文字・グレー）
+- 学歴は `[期間] 学校名` の1行形式（従来通り、`.bio-list` の左ボーダー付きリスト）
+- 職歴は `[期間] 会社名 — 役職名`（会社名・役職名は同じ太さ・サイズで並べる。学歴と同じ文字サイズ・色に統一）を1行目に、その下に説明文（`description`）を表示する
+- 期間表記はいずれも `formatBioPeriod()` で統一する（5.3節）
+- `links.yml` の LinkedIn URL が設定されている場合、学歴・職歴グループの下に「more →」（日英共通、翻訳しない）のリンクを表示する。LinkedIn URLが空の場合は表示しない
+- 学歴・職歴がともに0件ならセクション自体を非表示にする
 
 ### 12.5 ArticleEntry.astro
 
