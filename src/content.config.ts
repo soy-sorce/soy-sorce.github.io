@@ -9,7 +9,6 @@ const articles = defineCollection({
     description: z.string().optional(),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
-    selected: z.boolean().default(false),
     pinned: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
@@ -21,7 +20,6 @@ const papers = defineCollection({
   loader: file("src/data/papers.yml"),
   schema: z.object({
     category: z.enum(["journal", "conference", "preprint", "workshop", "poster"]),
-    selected: z.boolean().default(false),
     date: z.coerce.date(),
     year: z.number(),
     title: z.object({ ja: z.string(), en: z.string() }),
@@ -52,7 +50,6 @@ const papers = defineCollection({
 const awards = defineCollection({
   loader: file("src/data/awards.yml"),
   schema: z.object({
-    selected: z.boolean().default(false),
     date: z.coerce.date(),
     year: z.number(),
     title: z.object({ ja: z.string(), en: z.string() }),

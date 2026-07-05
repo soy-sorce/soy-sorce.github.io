@@ -1,7 +1,48 @@
-bio:
-  ja:
-    - "[2024 ~ 2028] 一橋大学 ソーシャル・データサイエンス学部"
-    - "[2026 ~ 2027] York University @カナダ（交換留学）"
-  en:
-    - "[2024 ~ 2028] School of Social Data Science, Hitotsubashi University"
-    - "[2026 ~ 2027] York University @canada (Exchange)"
+education:
+  - startYear: 2024
+    startMonth: 4
+    endYear: 2028
+    endMonth: 3
+    institution:
+      ja: "一橋大学 ソーシャル・データサイエンス学部"
+      en: "School of Social Data Science, Hitotsubashi University"
+    description:
+      ja: "欅研究室所属"
+      en: "Member of Keyaki Lab."
+  - startYear: 2026
+    startMonth: 8
+    endYear: 2027
+    endMonth: 5
+    institution:
+      ja: "York University @カナダ（交換留学）"
+      en: "York University @Canada (Exchange)"
+    description:
+      ja: "政治学部"
+      en: "The faculty of Political Science"
+
+work:
+  - startYear: 2026
+    startMonth: 4
+    endYear: null
+    company:
+      ja: "国立情報学研究所（NII）"
+      en: "National Institute of Informatics (NII)"
+    title:
+      ja: "技術補佐員"
+      en: "Technical Assistant"
+    description:
+      ja: "llm-jp コーパス構築ワーキンググループに所属し、コーパスの検索やハルシネーションに関する研究に従事"
+      en: "Member of the LLM-jp Corpus Construction Working Group, conducting research on corpus search and hallucination."
+  - startYear: 2025
+    startMonth: 4
+    endYear: 2026
+    endMonth: 6
+    company:
+      ja: "Memory Lab"
+      en: "Memory Lab"
+    title:
+      ja: "研究開発エンジニア・ソフトウェアエンジニア"
+      en: "Research and Development Engineer / Software Engineer"
+    description:
+      ja: "自社プロダクト開発に従事。特に論文・特許の検索システムやそれらを用いた指標等算出のシステムを構築。コーディングだけでなく、要件定義やヒヤリング、データベース整備など幅広く取り組む。"
+      en: "Engaged in the development of in-house products, particularly search systems for academic papers and patents, as well as systems for calculating metrics based on them. In addition to coding, involved in a wide range of tasks, including requirements definition, user interviews, and database maintenance."

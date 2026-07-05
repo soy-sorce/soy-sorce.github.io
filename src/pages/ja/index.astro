@@ -4,21 +4,16 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Hero from "../../components/Hero.astro";
 import NewsList from "../../components/NewsList.astro";
 import Bio from "../../components/Bio.astro";
-import ArticleEntry from "../../components/ArticleEntry.astro";
+import ArticleList from "../../components/ArticleList.astro";
 import PaperList from "../../components/PaperList.astro";
 import AwardsList from "../../components/AwardsList.astro";
 import { getArticlesByLocale, sortArticles } from "../../utils/articles";
 
 const locale = "ja" as const;
-const HOME_ARTICLES_LIMIT = 5;
 
-const selectedArticles = sortArticles(
-  (await getArticlesByLocale(locale)).filter((entry) => entry.data.selected)
-);
-const visibleSelectedArticles = selectedArticles.slice(0, HOME_ARTICLES_LIMIT);
-
-const selectedPapers = (await getCollection("papers")).filter((entry) => entry.data.selected);
-const selectedAwards = (await getCollection("awards")).filter((entry) => entry.data.selected);
+const articles = sortArticles(await getArticlesByLocale(locale));
+const papers = await getCollection("papers");
+const awards = await getCollection("awards");
 ---
 
 <BaseLayout locale={locale} title="Shohei Ichioka" description="Shohei Ichioka のポートフォリオサイト">
@@ -26,40 +21,31 @@ const selectedAwards = (await getCollection("awards")).filter((entry) => entry.d
   <NewsList locale={locale} />
   <Bio locale={locale} />
   {
-    selectedArticles.length > 0 && (
+    articles.length > 0 && (
       <section class="soft" id="articles">
         <div class="container">
-          <p class="eyebrow">Selected Articles</p>
-          <ul class="entry-list">
-            {visibleSelectedArticles.map((entry) => (
-              <ArticleEntry entry={entry} locale={locale} />
-            ))}
-          </ul>
-          {selectedArticles.length > HOME_ARTICLES_LIMIT && (
-            <p class="view-all">
-              <a href={`/${locale}/articles/`}>すべての記事を見る →</a>
-            </p>
-          )}
+          <p class="eyebrow">Articles</p>
+          <ArticleList articles={articles} locale={locale} />
         </div>
       </section>
     )
   }
   {
-    selectedPapers.length > 0 && (
+    papers.length > 0 && (
       <section id="papers">
         <div class="container">
-          <p class="eyebrow">Selected Papers</p>
-          <PaperList papers={selectedPapers} locale={locale} />
+          <p class="eyebrow">Papers</p>
+          <PaperList papers={papers} locale={locale} />
         </div>
       </section>
     )
   }
   {
-    selectedAwards.length > 0 && (
+    awards.length > 0 && (
       <section class="soft" id="awards">
         <div class="container">
           <p class="eyebrow">Awards</p>
-          <AwardsList awards={selectedAwards} locale={locale} />
+          <AwardsList awards={awards} locale={locale} />
         </div>
       </section>
     )

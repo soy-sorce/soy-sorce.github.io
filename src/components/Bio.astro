@@ -1,5 +1,5 @@
 ---
-import { getBio, getLinks } from "../utils/profile";
+import { getBio, getLinks, formatBioPeriod } from "../utils/profile";
 import type { Locale } from "../utils/i18n";
 
 interface Props {
@@ -7,20 +7,52 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const bio = getBio()[locale];
+const bio = getBio();
 const links = getLinks();
+
+const educationLabel = locale === "ja" ? "学歴" : "Education";
+const workLabel = locale === "ja" ? "職歴" : "Work";
 ---
 
 {
-  bio.length > 0 && (
+  (bio.education.length > 0 || bio.work.length > 0) && (
     <section id="bio">
       <div class="container">
         <p class="eyebrow">Bio</p>
-        <ul class="bio-list">
-          {bio.map((line) => (
-            <li>{line}</li>
-          ))}
-        </ul>
+        <div class="bio-columns">
+          {bio.education.length > 0 && (
+            <div class="bio-group">
+              <p class="bio-group-label">{educationLabel}</p>
+              <ul class="bio-list">
+                {bio.education.map((entry) => (
+                  <li>
+                    <p class="entry-meta">
+                      {formatBioPeriod(entry.startYear, entry.startMonth, entry.endYear, entry.endMonth, locale)}
+                    </p>
+                    <p class="bio-name">{entry.institution[locale]}</p>
+                    <p class="bio-desc">{entry.description[locale]}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {bio.work.length > 0 && (
+            <div class="bio-group">
+              <p class="bio-group-label">{workLabel}</p>
+              <ul class="bio-work-list">
+                {bio.work.map((entry) => (
+                  <li>
+                    <p class="entry-meta">
+                      {formatBioPeriod(entry.startYear, entry.startMonth, entry.endYear, entry.endMonth, locale)}
+                    </p>
+                    <p class="bio-work-role">{entry.company[locale]} — {entry.title[locale]}</p>
+                    <p class="bio-desc">{entry.description[locale]}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
         {links.linkedin.url && (
           <p class="view-all">
             <a href={links.linkedin.url}>more →</a>

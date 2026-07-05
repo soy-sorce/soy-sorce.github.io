@@ -1,13 +1,15 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import LoadMoreList from "./LoadMoreList.astro";
 import type { Locale } from "../utils/i18n";
 
 interface Props {
   papers: CollectionEntry<"papers">[];
   locale: Locale;
+  pageSize?: number;
 }
 
-const { papers, locale } = Astro.props;
+const { papers, locale, pageSize = 5 } = Astro.props;
 
 const CATEGORY_ORDER = ["journal", "conference", "preprint", "workshop", "poster"] as const;
 
@@ -32,40 +34,42 @@ const grouped = CATEGORY_ORDER.map((category) => ({
   grouped.map((group) => (
     <div class="paper-group">
       <p class="paper-category">{group.label}</p>
-      <ul class="entry-list">
-        {group.items.map((entry) => {
-          const data = entry.data;
-          const hasLinks =
-            data.links.pdf || data.links.code || data.links.project || data.links.bibtex || data.doi || data.arxivId;
-          return (
-            <li>
-              <p class="entry-meta">
-                {data.year} · {data.venue[locale]}
-              </p>
-              <h3 class="entry-title">{data.title[locale]}</h3>
-              <p class="paper-authors">
-                {data.authors.map((author, i) => (
-                  <>
-                    {i > 0 && ", "}
-                    <span class={author.isSelf ? "self" : ""}>{author.name}</span>
-                  </>
-                ))}
-              </p>
-              {data.description?.[locale] && <p class="entry-desc">{data.description[locale]}</p>}
-              {hasLinks && (
-                <div class="entry-links">
-                  {data.links.pdf && <a href={data.links.pdf}>PDF</a>}
-                  {data.links.code && <a href={data.links.code}>Code</a>}
-                  {data.links.project && <a href={data.links.project}>Project</a>}
-                  {data.links.bibtex && <a href={data.links.bibtex}>BibTeX</a>}
-                  {data.doi && <a href={`https://doi.org/${data.doi}`}>DOI: {data.doi}</a>}
-                  {data.arxivId && <a href={`https://arxiv.org/abs/${data.arxivId}`}>arXiv:{data.arxivId}</a>}
-                </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      <LoadMoreList itemCount={group.items.length} locale={locale} pageSize={pageSize}>
+        <ul class="entry-list">
+          {group.items.map((entry, i) => {
+            const data = entry.data;
+            const hasLinks =
+              data.links.pdf || data.links.code || data.links.project || data.links.bibtex || data.doi || data.arxivId;
+            return (
+              <li hidden={i >= pageSize}>
+                <p class="entry-meta">
+                  {data.year} · {data.venue[locale]}
+                </p>
+                <h3 class="entry-title">{data.title[locale]}</h3>
+                <p class="paper-authors">
+                  {data.authors.map((author, i) => (
+                    <>
+                      {i > 0 && ", "}
+                      <span class={author.isSelf ? "self" : ""}>{author.name}</span>
+                    </>
+                  ))}
+                </p>
+                {data.description?.[locale] && <p class="entry-desc">{data.description[locale]}</p>}
+                {hasLinks && (
+                  <div class="entry-links">
+                    {data.links.pdf && <a href={data.links.pdf}>PDF</a>}
+                    {data.links.code && <a href={data.links.code}>Code</a>}
+                    {data.links.project && <a href={data.links.project}>Project</a>}
+                    {data.links.bibtex && <a href={data.links.bibtex}>BibTeX</a>}
+                    {data.doi && <a href={`https://doi.org/${data.doi}`}>DOI: {data.doi}</a>}
+                    {data.arxivId && <a href={`https://arxiv.org/abs/${data.arxivId}`}>arXiv:{data.arxivId}</a>}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </LoadMoreList>
     </div>
   ))
 }

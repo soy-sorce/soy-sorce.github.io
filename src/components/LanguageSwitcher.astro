@@ -11,23 +11,59 @@ const otherLocale = getOtherLocale(locale);
 const href = getAlternatePath(pathname, otherLocale);
 ---
 
-<a class="lang-switch" href={href}>{otherLocale.toUpperCase()}</a>
+<div class="lang-toggle">
+  <span class="lang-current" aria-current="true">{locale.toUpperCase()}</span>
+  <span class="lang-sep" aria-hidden="true">/</span>
+  <a class="lang-other" href={href}>{otherLocale.toUpperCase()}</a>
+</div>
 
 <style>
-  .lang-switch {
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.06em;
-    color: var(--color-accent);
-    background: var(--color-accent-tint);
     border: 1px solid var(--color-border);
     border-radius: 999px;
-    padding: 6px 14px;
+    padding: 6px 12px;
+  }
+
+  .lang-current {
+    color: var(--color-text);
+  }
+
+  .lang-sep {
+    color: var(--color-border);
+  }
+
+  .lang-other {
+    color: var(--color-muted);
     text-decoration: none;
   }
 
-  .lang-switch:hover {
-    background: var(--color-border);
+  .lang-other:hover {
+    color: var(--color-accent);
   }
 </style>
+
+<script>
+  const SCROLL_STORAGE_KEY = "lang-switch-scroll-pct";
+
+  document.querySelectorAll<HTMLAnchorElement>(".lang-other").forEach((link) => {
+    link.addEventListener("click", () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? window.scrollY / scrollable : 0;
+      sessionStorage.setItem(SCROLL_STORAGE_KEY, String(pct));
+    });
+  });
+
+  const savedPct = sessionStorage.getItem(SCROLL_STORAGE_KEY);
+  if (savedPct !== null) {
+    sessionStorage.removeItem(SCROLL_STORAGE_KEY);
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo(0, scrollable * Number(savedPct));
+  }
+</script>
