@@ -129,15 +129,11 @@ export function getProfile() {
 /ja
 /en
 
-/ja/articles
-/en/articles
-
 /ja/articles/[slug]
 /en/articles/[slug]
-
-/ja/papers
-/en/papers
 ```
+
+Articles・Papersの一覧はいずれも専用ページを持たず、ホームページ（`/ja` `/en`）内の `#articles` `#papers` セクションに全件表示する（6.4節・7.4節）。
 
 将来的に追加する候補。
 
@@ -158,7 +154,7 @@ export function getProfile() {
 
 ```txt
 [Header]
-Name | Articles | Papers | Awards | CV | JA/EN
+Name | Bio | Articles | Papers | Awards | CV | JA/EN
 
 [Hero]
 Name
@@ -174,16 +170,16 @@ Articles / Papers / Awards から自動生成
 [Bio]
 箇条書き
 
-[Selected Articles]
-selected: true の記事だけ表示
+[Articles]
+全記事を表示（もっと見るで5件ずつ追加表示）
 空なら非表示
 
-[Selected Papers]
-selected: true の論文だけ表示
+[Papers]
+全論文をカテゴリ別に表示（カテゴリごとにもっと見るで5件ずつ追加表示）
 空なら非表示
 
 [Awards]
-selected: true の受賞歴だけ表示
+全受賞歴を表示（もっと見るで5件ずつ追加表示）
 空なら非表示
 
 [Footer]
@@ -205,8 +201,8 @@ Footer
 
 ```txt
 News
-Selected Articles
-Selected Papers
+Articles
+Papers
 Awards
 ```
 
@@ -448,7 +444,6 @@ const articles = defineCollection({
     description: z.string().optional(),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
-    selected: z.boolean().default(false),
     pinned: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
@@ -473,7 +468,6 @@ title: "BM25 + MMR 検索パイプラインの設計"
 description: "BM25検索とMMRリランキングを組み合わせた検索パイプラインの設計メモ。"
 date: "2026-07-04"
 updated: "2026-07-04"
-selected: true
 showInNews: true
 newsSummary: "BM25 + MMR に関する記事を公開しました。"
 ---
@@ -488,7 +482,6 @@ newsSummary: "BM25 + MMR に関する記事を公開しました。"
 title: "BM25 + MMR 検索パイプラインの設計"
 description: "BM25検索とMMRリランキングを組み合わせた検索パイプラインの設計メモ。"
 date: "2026-07-04"
-selected: true
 showInNews: true
 url: "https://zenn.dev/pepepepepepepe/articles/bm25-mmr"
 ---
@@ -496,33 +489,31 @@ url: "https://zenn.dev/pepepepepepepe/articles/bm25-mmr"
 
 ### 6.4 Articles の表示ルール
 
-- `/ja/articles` には日本語記事を一覧表示
-- `/en/articles` には英語記事を一覧表示
-- トップページには `selected: true` の記事だけ表示
-- 記事が0件なら `Selected Articles` セクションは非表示
+- ホームページ（`/ja` `/en`）の `Articles` セクションに、その言語の全記事を一覧表示する（専用の一覧ページは持たない。3.1節）
+- 記事が0件なら `Articles` セクションは非表示
 - `showInNews: true` の場合、Newsに自動表示
-- 一覧・トップページとも、記事はカードではなく枠のないリスト形式（左のアクセント罫線区切り）で表示する
+- 記事はカードではなく枠のないリスト形式（左のアクセント罫線区切り）で表示する
 - タグは表示しない
 - `url` が設定されている記事は「リンク投稿」として扱う
   - タイトルは `url` へのリンクになる（新しいタブで開く。`target="_blank" rel="noopener noreferrer"`）
   - サイト内の記事詳細ページ（`/ja/articles/[slug]`）は**生成しない**（`getStaticPaths` で `url` ありのエントリを除外する）
   - Newsに載る場合のリンク先も `url` になる
   - 対訳記事（6.6節）の相手が `url` ありの場合、サイト内ページが存在しないためhreflangの対象からは除外する（14.4節）
-- `url` が無い記事は従来通りサイト内の記事詳細ページにリンクする
+- `url` が無い記事は従来通りサイト内の記事詳細ページ（`/ja/articles/[slug]`）にリンクする
 
 ### 6.4.1 並び順とピン留め（`pinned`）
 
-記事一覧・トップページの「Selected Articles」は、いずれも以下の順で並べる（`sortArticles()`、6.5節）。
+ホームページの `Articles` セクションは、以下の順で並べる（`sortArticles()`、6.5節）。
 
 1. `pinned: true` の記事（この中では `date` の降順）
 2. それ以外の記事（`date` の降順）
 
-`pinned: true` の記事は日付に関わらず常に先頭グループに表示され、日付表示の横に `PICK UP` ラベルを付けて区別する。`selected` とは独立したフラグであり、「トップページには出さないが一覧ページの先頭には固定したい」という使い方もできる。
+`pinned: true` の記事は日付に関わらず常に先頭グループに表示され、日付表示の横に `PICK UP` ラベルを付けて区別する。
 
 ### 6.4.2 表示件数と続きの読み込み
 
-- トップページの「Selected Articles」は先頭5件のみ表示する。`selected: true` の記事が5件を超える場合、一覧ページ（`/ja/articles`）への「すべての記事を見る」リンクを表示する
-- `/ja/articles` `/en/articles` の一覧ページは、初期表示5件＋「もっと見る」ボタンで5件ずつ追加表示する。全記事はビルド時にHTMLへ埋め込まれており、「もっと見る」は`hidden`属性の付け外しのみを行う軽量なvanilla JSで実装する（サーバー通信やページ遷移は発生しない）
+- ホームページの `Articles` セクションは、初期表示5件＋「もっと見る」ボタンで5件ずつ追加表示する（`ArticleList.astro`、12.6節）
+- 全記事はビルド時にHTMLへ埋め込まれており、「もっと見る」は`hidden`属性の付け外しのみを行う軽量なvanilla JSで実装する（サーバー通信やページ遷移は発生しない）
 
 ### 6.5 locale 判定方法
 
@@ -649,7 +640,6 @@ const papers = defineCollection({
   loader: file("src/data/papers.yml"),
   schema: z.object({
     category: z.enum(["journal", "conference", "preprint", "workshop", "poster"]),
-    selected: z.boolean().default(false),
     date: z.coerce.date(),
     year: z.number(),
     title: z.object({
@@ -724,7 +714,6 @@ poster       Posters / Presentations
 ```yaml
 - id: "sample-paper"
   category: "preprint"
-  selected: true
   date: "2026-07-04"
   year: 2026
   title:
@@ -760,14 +749,12 @@ poster       Posters / Presentations
 
 ### 7.4 Papers の表示ルール
 
-- `/ja/papers` と `/en/papers` では全Papersを表示
-- カテゴリごとに分けて表示
-- 空カテゴリは表示しない
-- 全Papersが0件なら、Papers一覧ページでは「No papers yet.」のような短い表示にする
-- トップページでは `selected: true` のものだけ `Selected Papers` に表示
-- `selected: true` のPapersが0件なら、トップページの `Selected Papers` セクションは非表示
+- ホームページ（`/ja` `/en`）の `Papers` セクションに、全Papersを表示する（専用の一覧ページは持たない。3.1節）
+- カテゴリごとに分けて表示し、空カテゴリは表示しない
+- 全Papersが0件なら `Papers` セクション自体を非表示にする（3.2節・10.1節）
+- カテゴリごとに独立した「もっと見る」ボタンを持ち、そのカテゴリの件数が5件を超える場合のみ表示する（`LoadMoreList.astro` をカテゴリ単位でラップする。12.7節・12.8節）
 - `showInNews: true` の場合、Newsに自動表示
-- Papers一覧・Selected Papersともに、カードではなく枠のないリスト形式で表示する
+- カードではなく枠のないリスト形式で表示する
 - トピックタグは表示しない。カテゴリ分類とvenue/authorsの情報のみで整理する
 - `authors` のうち `isSelf: true` の著者名は太字で表示する
 - `doi` が設定されている場合、`DOI: 10.xxxx` の形式で `https://doi.org/{doi}` へのリンクとして表示する
@@ -798,7 +785,6 @@ Awards は YAML で管理し、Content Layer の `file()` loader で collection 
 const awards = defineCollection({
   loader: file("src/data/awards.yml"),
   schema: z.object({
-    selected: z.boolean().default(false),
     date: z.coerce.date(),
     year: z.number(),
     title: z.object({
@@ -833,7 +819,6 @@ const awards = defineCollection({
 
 ```yaml
 - id: "sample-award"
-  selected: true
   date: "2026-07-04"
   year: 2026
   title:
@@ -856,7 +841,6 @@ const awards = defineCollection({
 
 ```yaml
 - id: "sample-award-2"
-  selected: true
   date: "2026-07-04"
   year: 2026
   title:
@@ -870,14 +854,14 @@ const awards = defineCollection({
 
 ### 8.3 Awards の表示ルール
 
-- トップページでは `selected: true` のAwardsだけ表示
+- ホームページ（`/ja` `/en`）の `Awards` セクションに、全Awardsを表示する
 - Awardsが0件ならトップページの `Awards` セクションは非表示
-- 将来的に件数が増えたら `/ja/awards` `/en/awards` を作る
+- 将来的に件数が増えたら `/ja/awards` `/en/awards` を作る（19.2節）
 - `showInNews: true` の場合、Newsに自動表示
 - `url` が設定されている場合、受賞タイトルをその `url` へのハイパーリンクとして表示する
 - `url` が省略・`null` の場合、受賞タイトルはプレーンテキストとして表示する（リンク化しない）
 - `description` が設定されている場合、タイトル・団体名の下に表示する
-- 表示件数は日付の降順で先頭5件のみとし、6件を超える場合は「もっと見る」ボタンで5件ずつ追加表示する（Articlesの一覧ページと同じ`LoadMoreList.astro`を使用。12.6節・12.9節）。Awardsには専用の一覧ページ（`/ja/awards`）がまだ無いため、この「もっと見る」はトップページのAwardsセクション自体に付く
+- 表示件数は日付の降順で先頭5件のみとし、6件を超える場合は「もっと見る」ボタンで5件ずつ追加表示する（`LoadMoreList.astro` を使用。12.7節・12.9節）
 
 ---
 
@@ -966,7 +950,7 @@ en: newsSummary があればそれを表示。なければ "Added award: title."
 ### 9.5 News item のリンク先が無い場合の扱い
 
 - Article由来のNews item: `getArticleHref()`（6.5節）の結果を `url` に設定する。通常はサイト内の記事詳細ページ（`/ja/articles/[slug]` 等）、記事が外部リンク投稿（6.4節）の場合はその外部URL
-- Paper由来のNews item: 現段階ではPapersの専用詳細ページが無いため、`url` は設定しない（`/ja/papers` 一覧ページへのアンカーリンクも現時点では作らない）
+- Paper由来のNews item: 現段階ではPapersの専用詳細ページが無いため、`url` は設定しない（ホームページの `#papers` セクションへのアンカーリンクも現時点では作らない）
 - Award由来のNews item: 現段階ではAwardsの専用詳細ページが無いため、`url` は設定しない
 - `manual-news.yml` の手動Newsは、`url` を明示的に指定した場合のみリンクにする
 
@@ -982,20 +966,20 @@ en: newsSummary があればそれを表示。なければ "Added award: title."
 |---|---|
 | News | NewsItem が1件以上ある |
 | Bio | Bio が1件以上ある |
-| Selected Articles | selected articles が1件以上ある |
-| Selected Papers | selected papers が1件以上ある |
-| Awards | selected awards が1件以上ある |
+| Articles | 記事が1件以上ある |
+| Papers | 論文が1件以上ある |
+| Awards | 受賞歴が1件以上ある |
 | Footer | 常に表示 |
 
 Hero は常に表示する。Research Interestsのデータが空の場合は、Heroの箇条書きに単に追加項目が増えないだけであり、セクション単位の表示制御対象ではない（5.4節）。
 
-### 10.2 Papers ページ
+### 10.2 ホームページの Papers セクション
 
 | 単位 | 表示条件 |
 |---|---|
-| Papers ページ本体 | 常に表示 |
+| Papers セクション全体 | 全Papersが1件以上ある（0件ならセクション自体を非表示） |
 | 各カテゴリ | そのカテゴリに paper が1件以上ある |
-| 空状態メッセージ | 全Papersが0件の場合のみ表示 |
+| 各カテゴリの「もっと見る」ボタン | そのカテゴリの件数が `pageSize`（既定5）を超えている |
 
 ### 10.3 Links
 
@@ -1060,18 +1044,12 @@ portfolio-site/
 │   │   ├── 404.astro
 │   │   ├── ja/
 │   │   │   ├── index.astro
-│   │   │   ├── articles/
-│   │   │   │   ├── index.astro
-│   │   │   │   └── [slug].astro
-│   │   │   └── papers/
-│   │   │       └── index.astro
+│   │   │   └── articles/
+│   │   │       └── [slug].astro
 │   │   └── en/
 │   │       ├── index.astro
-│   │       ├── articles/
-│   │       │   ├── index.astro
-│   │       │   └── [slug].astro
-│   │       └── papers/
-│   │           └── index.astro
+│   │       └── articles/
+│   │           └── [slug].astro
 │   ├── styles/
 │   │   └── global.css
 │   └── utils/
@@ -1100,30 +1078,32 @@ portfolio-site/
 役割。
 
 - サイト名を表示
-- Articles / Papers / Awards / CV / JA/EN を表示
+- Bio / Articles / Papers / Awards / CV / JA/EN を表示
 - スマホではメニューボタンを表示
 
 表示項目。
 
 ```txt
-Name | Articles | Papers | Awards | CV | JA/EN
+Name | Bio | Articles | Papers | Awards | CV | JA/EN
 ```
 
-Awardsには専用ページがまだ無いため（19.2節）、Headerの「受賞」リンクはホームの `#awards` セクションへのアンカーリンク（`/${locale}/#awards`）にする。他のページから見ても常にホームへ遷移してAwardsセクションまでスクロールする。将来 `/ja/awards` を作ったら、このリンク先をそちらに差し替える。
+Bio / Articles / Papers / Awards はいずれも専用の一覧ページを持たず、ホームページ上の `#bio` `#articles` `#papers` `#awards` セクションへのアンカーリンクにする（`/${locale}/#bio` 等）。他のページから見ても常にホームへ遷移し、該当セクションまでスクロールする（3.1節）。Bioのラベルは日英共通で「Bio」（翻訳しない、セクション見出しと表記を揃える）。
 
 CVはリンク先が未実装のため、実装するまでHeaderから外す。
 
 現状。
 
 ```txt
-Name | Articles | Papers | Awards（#awardsアンカー） | JA/EN
+Name | Bio | Articles | Papers | Awards | JA/EN
 ```
 
-将来（`/ja/awards` `/ja/cv` 追加後）。
+将来（`/ja/cv` 追加後）。
 
 ```txt
-Name | Articles | Papers | Awards | CV | JA/EN
+Name | Bio | Articles | Papers | Awards | CV | JA/EN
 ```
+
+言語切り替え（JA/EN）は「JA / EN」のトグル形式で表示する。現在の言語はハイライトされたテキスト（リンクなし）、もう一方の言語のみをリンクにする（`LanguageSwitcher.astro`）。
 
 ### 12.2 Hero.astro
 
@@ -1181,7 +1161,7 @@ GitHub / X / LinkedIn / Zenn / Email
 
 - `ArticleEntry.astro` を並べた `<ul class="entry-list">` を、`LoadMoreList.astro`（12.7節）でラップして描画する
 - 表示件数（既定5件）を超える記事は `hidden` 付きで一緒にレンダリングしておき、「もっと見る」ボタンで5件ずつ表示する（6.4.2節）
-- `/ja/articles` `/en/articles` の一覧ページで使用する。トップページの「Selected Articles」は5件で打ち切って「すべての記事を見る」リンクを出すだけなので、このコンポーネントは使わない（12.2節Heroとは別に、ページ側で直接`<ul class="entry-list">`を組み立てる）
+- ホームページの `Articles` セクションで、全記事の一覧表示に使用する（専用の記事一覧ページは持たない。3.1節）
 
 ### 12.7 LoadMoreList.astro
 
@@ -1191,7 +1171,8 @@ GitHub / X / LinkedIn / Zenn / Email
 - 中身（`<ul>`とその`<li>`群）は呼び出し側が`<slot />`経由で渡す。各`<li>`側で`i >= pageSize`のとき`hidden`を付けるのは呼び出し側の責務
 - 全項目が既にHTMLに含まれているため、ボタンのクリックはvanilla JSでの`hidden`属性の付け外しのみで完結する。サーバー通信は発生しない
 - 隠れている項目が無くなったらボタンごと消す
-- `ArticleList.astro`（12.6節）と`AwardsList.astro`（12.9節）の両方から利用する
+- ボタンや非表示要素の検索は常に自身のブロック内に限定してスコープしているため、1ページ内に複数インスタンスを置いても状態が衝突しない
+- `ArticleList.astro`（12.6節）、`PaperList.astro`（12.8節、カテゴリごとに個別インスタンス）、`AwardsList.astro`（12.9節）から利用する
 
 ### 12.8 PaperList.astro
 
@@ -1199,6 +1180,7 @@ GitHub / X / LinkedIn / Zenn / Email
 
 - Papersをカテゴリごとに表示
 - 空カテゴリを非表示
+- カテゴリごとに `LoadMoreList.astro`（12.7節）で個別にラップし、そのカテゴリ単独で5件を超える場合にそのカテゴリだけ「もっと見る」ボタンを表示する（カテゴリをまたいだ一括のもっと見るにはしない）
 - `authors` のうち `isSelf: true` の著者名を太字表示
 - `doi` / `arxivId` があれば「DOI: ...」「arXiv:...」形式でリンク表示
 - その他の paper links（pdf / code / project / bibtex）を表示
@@ -1208,7 +1190,7 @@ GitHub / X / LinkedIn / Zenn / Email
 
 役割。
 
-- selected awards を表示
+- 全Awardsを表示
 - 0件なら非表示
 - `url` が設定されている場合、タイトルを外部ページへのリンクとして描画
 - `url` が無い場合、タイトルをプレーンテキストとして描画
@@ -1255,7 +1237,6 @@ const articles = defineCollection({
     description: z.string().optional(),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
-    selected: z.boolean().default(false),
     pinned: z.boolean().default(false),
     showInNews: z.boolean().default(false),
     newsSummary: z.string().optional(),
@@ -1267,7 +1248,6 @@ const papers = defineCollection({
   loader: file("src/data/papers.yml"),
   schema: z.object({
     category: z.enum(["journal", "conference", "preprint", "workshop", "poster"]),
-    selected: z.boolean().default(false),
     date: z.coerce.date(),
     year: z.number(),
     title: z.object({ ja: z.string(), en: z.string() }),
@@ -1298,7 +1278,6 @@ const papers = defineCollection({
 const awards = defineCollection({
   loader: file("src/data/awards.yml"),
   schema: z.object({
-    selected: z.boolean().default(false),
     date: z.coerce.date(),
     year: z.number(),
     title: z.object({ ja: z.string(), en: z.string() }),
@@ -1561,7 +1540,6 @@ frontmatter 例。
 title: "BM25 + MMR 検索パイプラインの設計"
 description: "BM25検索とMMRリランキングを組み合わせた検索パイプラインの設計メモ。"
 date: "2026-07-04"
-selected: true
 showInNews: true
 newsSummary: "BM25 + MMR に関する記事を公開しました。"
 ---
@@ -1585,7 +1563,6 @@ git push
 ```yaml
 - id: "sample-paper"
   category: "preprint"
-  selected: true
   date: "2026-07-04"
   year: 2026
   title:
@@ -1616,7 +1593,6 @@ git push
 
 ```yaml
 - id: "sample-award"
-  selected: true
   date: "2026-07-04"
   year: 2026
   title:
@@ -1684,8 +1660,6 @@ mkdir -p src/content/articles/ja
 mkdir -p src/content/articles/en
 mkdir -p src/pages/ja/articles
 mkdir -p src/pages/en/articles
-mkdir -p src/pages/ja/papers
-mkdir -p src/pages/en/papers
 mkdir -p scripts
 mkdir -p .github/workflows
 ```
@@ -1731,12 +1705,8 @@ src/pages/index.astro       # / → /ja へのmeta refreshリダイレクト（3
 src/pages/404.astro         # カスタム404（3.5節）
 src/pages/ja/index.astro
 src/pages/en/index.astro
-src/pages/ja/articles/index.astro
-src/pages/en/articles/index.astro
 src/pages/ja/articles/[slug].astro
 src/pages/en/articles/[slug].astro
-src/pages/ja/papers/index.astro
-src/pages/en/papers/index.astro
 ```
 
 ### Step 7: 検証スクリプト作成
@@ -1776,21 +1746,21 @@ git push origin main
 - Bio が表示される
 - Footer が表示される
 - 空の Articles / Papers / Awards / News がトップページに出ない
-- `/ja/articles` `/en/articles` が動く
-- `/ja/papers` `/en/papers` が動く
-- Articles / Papers の一覧・トップページ表示がいずれもリスト形式で、タグが表示されない
-- `papers.yml` に1件追加すると Papers ページに表示される
-- `selected: true` にするとトップページにも表示される
+- 記事詳細ページ（`/ja/articles/[slug]` `/en/articles/[slug]`）が動く
+- Articles / Papers の表示がいずれもホームページ上でリスト形式になり、タグが表示されない
+- `papers.yml` に1件追加すると、ホームページの Papers セクションに表示される
 - `showInNews: true` にすると News に表示される
 - Papers の `doi` / `arxivId` を設定すると、リンク付きで表示される
 - Award の `url` を設定するとタイトルがリンクになり、未設定だとプレーンテキストになる
 - Awardsが6件を超えると「もっと見る」ボタンが表示され、クリックで5件ずつ追加表示される
+- Papersの各カテゴリが6件を超えると、そのカテゴリ単位で「もっと見る」ボタンが表示される
 - `pnpm run check:articles` が日英ペア欠けを警告として出力する
 - 記事詳細ページに `hreflang` タグが正しく出力される（対訳が無い場合は自身の言語のみ）
-- 記事に `url` を設定すると、一覧・トップページ・Newsのタイトルが外部リンクになり、サイト内の記事詳細ページは生成されない
-- 記事に `pinned: true` を設定すると、日付に関わらず一覧・トップページの先頭に `PICK UP` ラベル付きで表示される
-- 記事が6件以上あるとき、`/ja/articles` `/en/articles` に「もっと見る」ボタンが表示され、クリックで5件ずつ追加表示される
-- トップページの「Selected Articles」で選択記事が5件を超えるとき、「すべての記事を見る」リンクが表示される
+- 記事に `url` を設定すると、ホームページ・Newsのタイトルが外部リンクになり、サイト内の記事詳細ページは生成されない
+- 記事に `pinned: true` を設定すると、日付に関わらずホームページの先頭に `PICK UP` ラベル付きで表示される
+- 記事が6件以上あるとき、ホームページの Articles セクションに「もっと見る」ボタンが表示され、クリックで5件ずつ追加表示される
+- Header の Articles / Papers / Awards リンクが、いずれもホームページの該当セクションへのアンカーリンクとして機能する
+- 言語切り替えが「JA / EN」のトグル形式で表示され、現在の言語がハイライトされる
 - main に push すると GitHub Pages にデプロイされる
 
 ---
@@ -1868,6 +1838,17 @@ Articles frontmatterに `draft: true` を追加し、dev環境でのみ表示・
 ### 19.13 Awardsのカテゴリ分類
 
 学内賞・学会賞・奨学金などの `category` フィールドを追加し、件数が増えたときにグルーピングする案。
+
+### 19.14 Articles / Papers 専用一覧ページ
+
+```txt
+/ja/articles
+/en/articles
+/ja/papers
+/en/papers
+```
+
+記事・論文の件数が増え、ホームページ1枚に収まりづらくなった場合の候補として、専用の一覧ページを追加する。
 
 ---
 

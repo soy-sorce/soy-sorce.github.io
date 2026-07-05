@@ -10,8 +10,9 @@ interface Props {
 const { locale, pathname } = Astro.props;
 
 const nav = [
-  { href: `/${locale}/articles/`, label: locale === "ja" ? "記事" : "Articles" },
-  { href: `/${locale}/papers/`, label: locale === "ja" ? "論文" : "Papers" },
+  { href: `/${locale}/#bio`, label: locale === "ja" ? "経歴" : "Bio" },
+  { href: `/${locale}/#articles`, label: locale === "ja" ? "記事" : "Articles" },
+  { href: `/${locale}/#papers`, label: locale === "ja" ? "論文" : "Papers" },
   { href: `/${locale}/#awards`, label: locale === "ja" ? "受賞" : "Awards" },
 ];
 ---

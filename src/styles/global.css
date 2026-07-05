@@ -63,7 +63,7 @@ h3 {
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -403,7 +403,7 @@ a.award-title:hover {
 
 .award-desc {
   margin: 8px 0 0;
-  color: var(--color-muted);
+  color: var(--color-text);
   font-size: 14px;
   max-width: 60ch;
 }
