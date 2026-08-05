@@ -1,6 +1,6 @@
 ---
 import LanguageSwitcher from "./LanguageSwitcher.astro";
-import type { Locale } from "../utils/i18n";
+import { getLocalizedPath, type Locale } from "../utils/i18n";
 
 interface Props {
   locale: Locale;
@@ -10,16 +10,16 @@ interface Props {
 const { locale, pathname } = Astro.props;
 
 const nav = [
-  { href: `/${locale}/#bio`, label: locale === "ja" ? "経歴" : "Bio" },
-  { href: `/${locale}/#articles`, label: locale === "ja" ? "記事" : "Articles" },
-  { href: `/${locale}/#papers`, label: locale === "ja" ? "論文" : "Papers" },
-  { href: `/${locale}/#awards`, label: locale === "ja" ? "受賞" : "Awards" },
+  { href: getLocalizedPath(locale, "/#bio"), label: locale === "ja" ? "経歴" : "Bio" },
+  { href: getLocalizedPath(locale, "/#articles"), label: locale === "ja" ? "記事" : "Articles" },
+  { href: getLocalizedPath(locale, "/#papers"), label: locale === "ja" ? "論文" : "Papers" },
+  { href: getLocalizedPath(locale, "/#awards"), label: locale === "ja" ? "受賞" : "Awards" },
 ];
 ---
 
 <header class="site-header">
   <div class="header-inner container">
-    <a class="brand" href={`/${locale}/`}>Shohei Ichioka</a>
+    <a class="brand" href={getLocalizedPath(locale, "/")}>Shohei Ichioka</a>
     <nav class="main-nav" id="main-nav">
       {nav.map((item) => <a href={item.href}>{item.label}</a>)}
       <LanguageSwitcher locale={locale} pathname={pathname} />

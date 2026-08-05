@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
-import type { Locale } from "./i18n";
+import { getLocalizedPath, type Locale } from "./i18n";
 
 export function getLocaleFromId(id: string): Locale {
   return id.startsWith("en/") ? "en" : "ja";
@@ -23,7 +23,7 @@ export function isExternalArticle(entry: CollectionEntry<"articles">): boolean {
 
 export function getArticleHref(entry: CollectionEntry<"articles">, locale: Locale): string {
   if (entry.data.url) return entry.data.url;
-  return `/${locale}/articles/${getSlugFromId(entry.id)}/`;
+  return getLocalizedPath(locale, `/articles/${getSlugFromId(entry.id)}/`);
 }
 
 /**

@@ -120,18 +120,19 @@ export function getProfile() {
 
 ### 3.1 URL設計
 
-初期段階では以下を作る。
+英語（`en`）をデフォルトロケールとし、プレフィックス無しでルートに配置する。日本語（`ja`）のみ `/ja` プレフィックスを付ける（非対称なプレフィックス構成）。
 
 ```txt
-/
-  /ja へリダイレクト（3.4節参照）
+/                     # 英語トップ（実体。リダイレクトではない）
+/ja                    # 日本語トップ
 
-/ja
-/en
+/articles/[slug]       # 英語の記事詳細
+/ja/articles/[slug]    # 日本語の記事詳細
 
-/ja/articles/[slug]
-/en/articles/[slug]
+/en                    # 旧URL互換のための薄いリダイレクトページ（/ へ meta refresh。3.4節参照）
 ```
+
+`/${locale}/...` のようにロケールを機械的にプレフィックスすると `en` の場合に誤ったURLになるため、`src/utils/i18n.ts` の `getLocalizedPath(locale, path)` を使って組み立てる（defaultLocaleならプレフィックス無し、それ以外は `/${locale}` を付与）。
 
 Articles・Papersの一覧はいずれも専用ページを持たず、ホームページ（`/ja` `/en`）内の `#articles` `#papers` セクションに全件表示する（6.4節・7.4節）。
 
@@ -206,26 +207,26 @@ Papers
 Awards
 ```
 
-### 3.4 ルートパス `/` のリダイレクト設計
+### 3.4 `/en` の後方互換リダイレクト設計
 
-Astroのi18nルーティングで `routing: { prefixDefaultLocale: true }` を設定しても、ルートパス `/` は自動的に `/ja` へリダイレクトされるわけではない。加えて、本サイトは GitHub Pages 上の完全静的サイト（SSRなし、`output: "static"`）であるため、`Astro.redirect()` のようなサーバーサイドのリダイレクトAPIは使えない。
+`defaultLocale` を `en`・`prefixDefaultLocale: false` としたため、`src/pages/index.astro` は本物の英語トップページ（実体）であり、リダイレクト専用ページではない。
 
-そのため `src/pages/index.astro` を自作し、静的にビルドされたHTMLの中で meta refresh によるリダイレクトを行う。
+一方、英語を `/en` プレフィックス付きで運用していた期間が過去にあったため、その旧URLを踏んだ場合に404にしないよう、`src/pages/en/index.astro` だけを薄いリダイレクトページとして残す（本サイトは GitHub Pages 上の完全静的サイトで `Astro.redirect()` のようなサーバーサイドAPIは使えないため、静的HTML内の meta refresh でリダイレクトする）。
 
 ```astro
 ---
-// src/pages/index.astro
+// src/pages/en/index.astro
 ---
 <!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0; url=/ja/" />
-    <link rel="canonical" href="/ja/" />
+    <meta http-equiv="refresh" content="0; url=/" />
+    <link rel="canonical" href="/" />
     <title>Shohei Ichioka</title>
   </head>
   <body>
-    <p>Redirecting to <a href="/ja/">/ja/</a>...</p>
+    <p>Redirecting to <a href="/">/</a>...</p>
   </body>
 </html>
 ```
@@ -233,8 +234,9 @@ Astroのi18nルーティングで `routing: { prefixDefaultLocale: true }` を�
 補足。
 
 - meta refresh の `content="0; ..."` は即時リダイレクトを意味する
-- `<a href="/ja/">` を本文に残すことで、JS/meta refresh が効かない環境でも遷移できるようにする
-- クローラーにも `/ja/` を正として認識させるため `<link rel="canonical">` を明記する
+- `<a href="/">` を本文に残すことで、JS/meta refresh が効かない環境でも遷移できるようにする
+- クローラーにも `/` を正として認識させるため `<link rel="canonical">` を明記する
+- `/en/articles/[slug]` のような下位URLについては、外部リンク記事（`isExternalArticle`）しか存在しない現状ではサイト内詳細ページ自体が1件も生成されないため、個別のリダイレクトは用意していない。将来オンサイト記事が増えた場合は同様の薄いリダイレクトページの追加を検討する
 
 ### 3.5 404ページ設計
 
@@ -1359,11 +1361,11 @@ export const collections = { articles, papers, awards, manualNews };
 ### 14.1 URL
 
 ```txt
-/ja
-/en
+/          # 英語（defaultLocale、プレフィックス無し）
+/ja        # 日本語（/ja プレフィックス付き）
 ```
 
-日本語をデフォルトにする。ルートパス `/` の扱いは3.4節を参照。
+英語をデフォルトにし、`prefixDefaultLocale: false` によりプレフィックス無しでルートに配置する。日本語のみ `/ja` プレフィックスを持つ非対称構成。旧 `/en` URLの扱いは3.4節を参照。
 
 ### 14.2 locale 型
 
@@ -1374,16 +1376,26 @@ export type Locale = "ja" | "en";
 
 export const locales: Locale[] = ["ja", "en"];
 
-export const defaultLocale: Locale = "ja";
+export const defaultLocale: Locale = "en";
 
 export function getOtherLocale(locale: Locale): Locale {
   return locale === "ja" ? "en" : "ja";
 }
 
+/**
+ * defaultLocale（en）はプレフィックス無し、それ以外（ja）は `/ja` を付ける。
+ */
+export function getLocalizedPath(locale: Locale, path: string): string {
+  return locale === defaultLocale ? path : `/${locale}${path}`;
+}
+
 export function getAlternatePath(pathname: string, targetLocale: Locale): string {
-  return pathname.replace(/^\/(ja|en)/, `/${targetLocale}`);
+  const stripped = pathname.replace(/^\/(ja|en)(?=\/|$)/, "") || "/";
+  return getLocalizedPath(targetLocale, stripped);
 }
 ```
+
+`getAlternatePath` は「現在のパスからロケールプレフィックスを取り除き、対象ロケール用のプレフィックスを付け直す」という非対称対応の処理になっている。`Header.astro` のnav・ロゴリンクや `utils/articles.ts` の `getArticleHref()` など、ロケールに応じたURLを組み立てる箇所は `` `/${locale}/...` `` のような直接文字列結合をせず、必ず `getLocalizedPath()` を使う（enの場合にプレフィックスを付けてしまうバグを防ぐため）。
 
 ### 14.3 astro.config.mjs
 
@@ -1395,9 +1407,9 @@ export default defineConfig({
   site: "https://soy-sorce.github.io",
   i18n: {
     locales: ["ja", "en"],
-    defaultLocale: "ja",
+    defaultLocale: "en",
     routing: {
-      prefixDefaultLocale: true,
+      prefixDefaultLocale: false,
     },
   },
   vite: {
@@ -1412,7 +1424,7 @@ export default defineConfig({
 - リポジトリ名が `portfolio-site` などの場合、`base: "/portfolio-site"` が必要
 - 独自ドメインを使う場合、`site` は独自ドメインにする
 - 独自ドメインを使う場合、基本的に `base` は不要
-- `prefixDefaultLocale: true` はルートパス `/` を自動リダイレクトしない。`/` の扱いは3.4節を参照
+- この `i18n` 設定はAstroの自動i18nルーティング機能ではなく、`src/pages/ja/` `src/pages/` 配下に手動配置したページ構成を使っているため、実際のルーティングを直接駆動するものではない。設計意図を明示するための宣言として記述している
 
 ### 14.4 hreflang / canonical 設計
 
@@ -1430,10 +1442,12 @@ const alternatePath = getAlternatePath(pathname, otherLocale);
   <>
     <link rel="alternate" hreflang="ja" href={new URL(getAlternatePath(pathname, "ja"), Astro.site)} />
     <link rel="alternate" hreflang="en" href={new URL(getAlternatePath(pathname, "en"), Astro.site)} />
-    <link rel="alternate" hreflang="x-default" href={new URL(getAlternatePath(pathname, "ja"), Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(getAlternatePath(pathname, "en"), Astro.site)} />
   </>
 )}
 ```
+
+`x-default` は新しいデフォルトロケール（`en`）を指す。
 
 記事詳細ページ（`/ja/articles/[slug]`）は、対になる言語の記事が存在するとは限らない（6.6節）。存在しない場合に `hreflang="en"` が404ページを指してしまうと逆効果なので、記事詳細ページを描画する際は事前に対訳記事の有無を確認し、無い場合は `hasAlternate={false}` を渡して自身の言語のみの `canonical` を出力する。対訳記事が `url`（外部リンク投稿, 6.4節）を持つ場合はサイト内ページが存在しないため、これも「対訳なし」として扱う。
 
@@ -1738,12 +1752,12 @@ src/components/LanguageSwitcher.astro
 ### Step 6: ページ作成
 
 ```txt
-src/pages/index.astro       # / → /ja へのmeta refreshリダイレクト（3.4節）
-src/pages/404.astro         # カスタム404（3.5節）
+src/pages/index.astro        # 英語トップ（実体、プレフィックス無し）
+src/pages/404.astro          # カスタム404（3.5節）
 src/pages/ja/index.astro
-src/pages/en/index.astro
+src/pages/en/index.astro     # 旧 /en URL 互換のためのmeta refreshリダイレクト（3.4節）
+src/pages/articles/[slug].astro
 src/pages/ja/articles/[slug].astro
-src/pages/en/articles/[slug].astro
 ```
 
 ### Step 7: 検証スクリプト作成
@@ -1774,9 +1788,9 @@ git push origin main
 
 以下を満たせばMVP完成。
 
-- `/` にアクセスすると `/ja/` にリダイレクトされる
+- `/` にアクセスすると英語トップページが直接表示される（リダイレクトなし）
 - `/ja` が表示される
-- `/en` が表示される
+- `/en` にアクセスすると `/` にリダイレクトされる（旧URL互換）
 - `/存在しないパス` にアクセスするとカスタム404ページが表示される
 - Header が表示される（Xリンクを含む）
 - Hero が表示される（Research Interestsの箇条書きを含む）
