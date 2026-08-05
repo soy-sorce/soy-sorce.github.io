@@ -44,5 +44,5 @@ work:
       ja: "研究開発エンジニア・ソフトウェアエンジニア"
       en: "Research and Development Engineer / Software Engineer"
     description:
-      ja: "自社プロダクト開発に従事。特に論文・特許の検索システムやそれらを用いた指標等算出のシステムを構築。コーディングだけでなく、要件定義やヒヤリング、データベース整備など幅広く取り組む。"
-      en: "Engaged in the development of in-house products, particularly search systems for academic papers and patents, as well as systems for calculating metrics based on them. In addition to coding, involved in a wide range of tasks, including requirements definition, user interviews, and database maintenance."
+      ja: "自社プロダクト開発に従事。特に論文・特許の検索システムやそれらを用いた指標等算出のシステムを構築。"
+      en: "Engaged in the development of in-house products, particularly search systems for academic papers and patents, as well as systems for calculating metrics based on them."

@@ -1,13 +1,13 @@
 ---
 import { render, type CollectionEntry } from "astro:content";
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
   getArticlesByLocale,
   getArticleCounterpart,
   getSlugFromId,
   isExternalArticle,
-} from "../../../utils/articles";
-import { getAlternatePath } from "../../../utils/i18n";
+} from "../../utils/articles";
+import { getAlternatePath } from "../../utils/i18n";
 
 export async function getStaticPaths() {
   const articles = (await getArticlesByLocale("en")).filter((entry) => !isExternalArticle(entry));

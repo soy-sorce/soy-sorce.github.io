@@ -1,16 +1,53 @@
 ---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import NewsList from "../components/NewsList.astro";
+import Bio from "../components/Bio.astro";
+import ArticleList from "../components/ArticleList.astro";
+import PaperList from "../components/PaperList.astro";
+import AwardsList from "../components/AwardsList.astro";
+import { getArticlesByLocale, sortArticles } from "../utils/articles";
+
+const locale = "en" as const;
+
+const articles = sortArticles(await getArticlesByLocale(locale));
+const papers = await getCollection("papers");
+const awards = await getCollection("awards");
 ---
 
-<!doctype html>
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0; url=/ja/" />
-    <link rel="canonical" href="/ja/" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <title>Shohei Ichioka</title>
-  </head>
-  <body>
-    <p>Redirecting to <a href="/ja/">/ja/</a>...</p>
-  </body>
-</html>
+<BaseLayout locale={locale} title="Shohei Ichioka" description="Portfolio site of Shohei Ichioka">
+  <Hero locale={locale} />
+  <NewsList locale={locale} />
+  <Bio locale={locale} />
+  {
+    articles.length > 0 && (
+      <section class="soft" id="articles">
+        <div class="container">
+          <p class="eyebrow">Articles</p>
+          <ArticleList articles={articles} locale={locale} />
+        </div>
+      </section>
+    )
+  }
+  {
+    papers.length > 0 && (
+      <section id="papers">
+        <div class="container">
+          <p class="eyebrow">Papers</p>
+          <PaperList papers={papers} locale={locale} />
+        </div>
+      </section>
+    )
+  }
+  {
+    awards.length > 0 && (
+      <section class="soft" id="awards">
+        <div class="container">
+          <p class="eyebrow">Awards</p>
+          <AwardsList awards={awards} locale={locale} />
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
