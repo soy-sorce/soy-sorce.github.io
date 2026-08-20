@@ -16,11 +16,9 @@
   --section-gap: 72px;
   --radius-card: 18px;
 
-  /* docs/mockup.html で承認されたタイポグラフィ方針 */
-  --font-display: "Hiragino Mincho ProN", "Yu Mincho", "Times New Roman", ui-serif, Georgia, serif;
-  --font-body: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", -apple-system,
+  /* タイポグラフィ: サンセリフに統一。見出し・ラベルは太さ/字間/色で区別する */
+  --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
 }
 
 * {
@@ -35,7 +33,7 @@ body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
@@ -54,17 +52,17 @@ a {
 h1,
 h2,
 h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   text-wrap: balance;
   margin: 0;
 }
 
 .eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -98,8 +96,10 @@ section.soft {
 /* ---------- Hero ---------- */
 
 .hero-id {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   color: var(--color-muted);
   margin: 0 0 18px;
 }
@@ -190,8 +190,10 @@ section.soft {
 }
 
 .news-date {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   color: var(--color-muted);
 }
 
@@ -215,7 +217,7 @@ section.soft {
 }
 
 .bio-group-label {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -296,8 +298,10 @@ section.soft {
 }
 
 .entry-meta {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   color: var(--color-muted);
   margin: 0 0 6px;
 }
@@ -325,7 +329,7 @@ section.soft {
 
 .pin-badge {
   display: inline-block;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -356,7 +360,7 @@ section.soft {
   display: block;
   margin: 24px 0 0;
   padding: 10px 20px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -376,8 +380,10 @@ section.soft {
   flex-wrap: wrap;
   gap: 14px;
   margin-top: 12px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
 }
 
 .entry-links a {
@@ -391,7 +397,7 @@ section.soft {
 }
 
 .paper-category {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -438,8 +444,10 @@ section.soft {
 }
 
 .copyright {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   color: var(--color-muted);
 }
 
