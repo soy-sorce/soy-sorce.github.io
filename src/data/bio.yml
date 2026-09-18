@@ -23,7 +23,8 @@ education:
 work:
   - startYear: 2026
     startMonth: 4
-    endYear: null
+    endYear: 2026
+    endMonth: 8
     company:
       ja: "国立情報学研究所（NII）"
       en: "National Institute of Informatics (NII)"
