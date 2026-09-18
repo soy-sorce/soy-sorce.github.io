@@ -347,8 +347,8 @@ links:
     url: ""
   email:
     label: "Email"
-    url: "mailto:ichi.shouhei44en@gmail.com"
-    display: "ichi.shouhei44en [at] gmail.com"
+    url: "mailto:soysorce.work@gmail.com"
+    display: "soysorce.work [at] gmail.com"
 ```
 
 表示ルール。
