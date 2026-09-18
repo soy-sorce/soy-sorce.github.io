@@ -47,3 +47,16 @@ work:
     description:
       ja: "自社プロダクト開発に従事。特に論文・特許の検索システムやそれらを用いた指標等算出のシステムを構築。"
       en: "Engaged in the development of in-house products, particularly search systems for academic papers and patents, as well as systems for calculating metrics based on them."
+  - startYear: 2025
+    startMonth: 2
+    endYear: 2025
+    endMonth: 2
+    company:
+      ja: "恵那市役所（岐阜県）"
+      en: "Ena City Hall (Gifu, Japan)"
+    title:
+      ja: "インターンシップ"
+      en: "Intern"
+    description:
+      ja: ""
+      en: ""
