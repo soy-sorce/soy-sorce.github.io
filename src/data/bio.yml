@@ -32,8 +32,8 @@ work:
       ja: "技術補佐員"
       en: "Technical Assistant"
     description:
-      ja: "llm-jp コーパス構築ワーキンググループに所属し、コーパスの検索やハルシネーションに関する研究に従事"
-      en: "Member of the LLM-jp Corpus Construction Working Group, conducting research on corpus search and hallucination."
+      ja: ""
+      en: ""
   - startYear: 2025
     startMonth: 4
     endYear: 2026
@@ -45,8 +45,8 @@ work:
       ja: "研究開発エンジニア・ソフトウェアエンジニア"
       en: "Research and Development Engineer / Software Engineer"
     description:
-      ja: "自社プロダクト開発に従事。特に論文・特許の検索システムやそれらを用いた指標等算出のシステムを構築。"
-      en: "Engaged in the development of in-house products, particularly search systems for academic papers and patents, as well as systems for calculating metrics based on them."
+      ja: ""
+      en: ""
   - startYear: 2025
     startMonth: 2
     endYear: 2025
