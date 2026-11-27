@@ -20,6 +20,15 @@ education:
       ja: "政治学部"
       en: "The faculty of Political Science"
 
+scholarships:
+  - year: 2026
+    name:
+      ja: "経団連グローバル人材育成スカラーシップ（15期生）"
+      en: "Keidanren Global Human Resources Development Scholarship (15th Cohort)"
+    description:
+      ja: "2026年採択"
+      en: "Selected in 2026"
+
 work:
   - startYear: 2026
     startMonth: 4
