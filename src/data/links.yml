@@ -8,9 +8,9 @@ links:
   linkedin:
     label: "LinkedIn"
     url: "https://www.linkedin.com/in/shohei-ichioka-b93806358/"
-  zenn:
-    label: "Zenn"
-    url: "https://zenn.dev/pepepepepepepe"
+  qiita:
+    label: "Qiita"
+    url: "https://qiita.com/soy-sorce"
   googleScholar:
     label: "Google Scholar"
     url: ""

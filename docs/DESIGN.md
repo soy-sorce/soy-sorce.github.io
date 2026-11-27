@@ -161,7 +161,7 @@ Name | Bio | Articles | Papers | Awards | CV | JA/EN
 Name
 Short bio（箇条書き）
 Research Interests（箇条書き。独立セクションは作らず、Heroの箇条書きに含める）
-GitHub / X / LinkedIn / Zenn / Google Scholar / Email
+GitHub / X / LinkedIn / Qiita / Google Scholar / Email
 
 [News]
 最新3〜5件
@@ -184,7 +184,7 @@ Articles / Papers / Awards から自動生成
 空なら非表示
 
 [Footer]
-Email / GitHub / X / LinkedIn / Zenn / Google Scholar / ©
+Email / GitHub / X / LinkedIn / Qiita / Google Scholar / ©
 ```
 
 ### 3.3 初期表示
@@ -339,9 +339,9 @@ links:
   linkedin:
     label: "LinkedIn"
     url: "https://www.linkedin.com/in/shohei-ichioka-b93806358/"
-  zenn:
-    label: "Zenn"
-    url: "https://zenn.dev/pepepepepepepe"
+  qiita:
+    label: "Qiita"
+    url: "https://qiita.com/soy-sorce"
   googleScholar:
     label: "Google Scholar"
     url: ""
@@ -381,6 +381,15 @@ education:
     description:
       ja: "交換留学中の学習内容や活動の説明。"
       en: "Description of coursework or activities during the exchange."
+
+scholarships:
+  - year: 2026
+    name:
+      ja: "経団連グローバル人材育成スカラーシップ（15期生）"
+      en: "Keidanren Global Human Resources Development Scholarship (15th Cohort)"
+    description:
+      ja: "2026年採択"
+      en: "Selected in 2026"
 
 work:
   - startYear: 2025
@@ -488,7 +497,7 @@ const articles = defineCollection({
 
 記事にタグ（トピックラベル）は付けない。トピックは `description` や本文で表現する。
 
-`url` は、Zenn等の外部サイトに書いた記事をこのサイトの「Articles」一覧に**リンク投稿として**載せるためのフィールドである（6.4節）。値が無い記事は通常通りサイト内に記事詳細ページを持つ。
+`url` は、Qiita等の外部サイトに書いた記事をこのサイトの「Articles」一覧に**リンク投稿として**載せるためのフィールドである（6.4節）。値が無い記事は通常通りサイト内に記事詳細ページを持つ。
 
 ### 6.3 Article frontmatter
 
@@ -507,7 +516,7 @@ newsSummary: "BM25 + MMR に関する記事を公開しました。"
 本文を書く。
 ```
 
-外部サイト（Zennなど）に書いた記事をリンク投稿として載せる場合は `url` を追加する。この場合、本文はサイト上で使われないため空でもよい。
+外部サイト（Qiitaなど）に書いた記事をリンク投稿として載せる場合は `url` を追加する。この場合、本文はサイト上で使われないため空でもよい。
 
 ```mdx
 ---
@@ -515,7 +524,7 @@ title: "BM25 + MMR 検索パイプラインの設計"
 description: "BM25検索とMMRリランキングを組み合わせた検索パイプラインの設計メモ。"
 date: "2026-07-04"
 showInNews: true
-url: "https://zenn.dev/pepepepepepepe/articles/bm25-mmr"
+url: "https://qiita.com/soy-sorce/items/xxxxxxxx"
 ---
 ```
 
@@ -1021,7 +1030,7 @@ Hero は常に表示する。Research Interestsのデータが空の場合は、
 | GitHub | url が空でない |
 | X | url が空でない |
 | LinkedIn | url が空でない |
-| Zenn | url が空でない |
+| Qiita | url が空でない |
 | Google Scholar | url が空でない |
 | Email | display と url が空でない |
 
@@ -1157,7 +1166,7 @@ NII 技術補佐員。
 llm-jp コーパス構築ワーキンググループ所属。
 研究関心: 情報検索（IR）、自然言語処理（NLP）、行政学
 
-GitHub / X / LinkedIn / Zenn / Email
+GitHub / X / LinkedIn / Qiita / Email
 ```
 
 ### 12.3 NewsList.astro
@@ -1172,13 +1181,13 @@ GitHub / X / LinkedIn / Zenn / Email
 
 役割。
 
-- 学歴（Education）と職歴（Work）を縦に並べて表示する（学歴グループ→職歴グループの順、常に1カラム）。各グループの見出しラベルは `PaperList.astro` のカテゴリラベルと同じ見た目（モノスペース・14px・大文字・グレー）
+- 学歴（Education）・奨学金（Scholarships）・職歴（Work）を縦に並べて表示する（学歴→奨学金→職歴の順、常に1カラム）。奨学金は `scholarships`（採択年 `year`・名称 `name`・任意の `description`）を `[年] 名称` ＋説明文で表示し、学歴と同じ `.bio-list` を使う。各グループの見出しラベルは `PaperList.astro` のカテゴリラベルと同じ見た目（モノスペース・14px・大文字・グレー）
 - 学歴は `[期間] 学校名` の1行（`.bio-list` の左ボーダー付きリスト）、その下に説明文（`description`）を表示する
 - 職歴は `[期間] 会社名 — 役職名`（会社名・役職名は同じ太さ・サイズで並べる。学歴と同じ文字サイズ・色に統一）を1行目に、その下に説明文（`description`）を表示する
 - 学歴・職歴の説明文はいずれも共通の `.bio-desc`（14px・`--color-text`）を使う
 - 期間表記はいずれも `formatBioPeriod()` で統一する（5.3節）
 - `links.yml` の LinkedIn URL が設定されている場合、学歴・職歴グループの下に「more →」（日英共通、翻訳しない）のリンクを表示する。LinkedIn URLが空の場合は表示しない
-- 学歴・職歴がともに0件ならセクション自体を非表示にする
+- 学歴・奨学金・職歴がすべて0件ならセクション自体を非表示にする
 
 ### 12.5 ArticleEntry.astro
 
@@ -1244,14 +1253,14 @@ GitHub / X / LinkedIn / Zenn / Email
 - GitHub
 - X
 - LinkedIn
-- Zenn
+- Qiita
 - Google Scholar
 - ©
 
 表示例。
 
 ```txt
-Email / GitHub / X / LinkedIn / Zenn
+Email / GitHub / X / LinkedIn / Qiita
 © 2026 Shohei Ichioka
 ```
 

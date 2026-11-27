@@ -61,13 +61,28 @@ work:
 - `education` は学校名（`institution`）と説明文（`description`、必須）を持つ。`work` は会社名（`company`）・役職名（`title`。会社名と同格で表示される）・説明文（`description`、必須）を持つ
 - どちらも配列なので、上に新しい項目を追加すればそのまま表示件数が増える（自動ソートはしないので、表示したい順に並べる）
 
+### 奨学金: `src/data/bio.yml` の `scholarships`
+
+`education` / `work` と同じファイルに置く配列で、Bioセクションの「奨学金 / Scholarships」として表示される（学歴の次、職歴の前）。省略または空配列なら表示されない。
+
+```yaml
+scholarships:
+  - year: 2026          # 採択年（数値、必須）
+    name:
+      ja: "経団連グローバル人材育成スカラーシップ（15期生）"
+      en: "Keidanren Global Human Resources Development Scholarship (15th Cohort)"
+    description:        # 省略可
+      ja: "2026年採択"
+      en: "Selected in 2026"
+```
+
 ### `src/data/interests.yml`
 
 `researchInterests.ja` / `.en` の配列。**独立したセクションとしては表示されない**。Heroの箇条書き末尾に「研究関心: A、B、C」のように1行へ自動的にまとめられる。
 
 ### `src/data/links.yml`
 
-`github` / `x` / `linkedin` / `zenn` / `googleScholar` / `email` の各キーに `label` / `url`（emailのみ追加で `display`）を持つ。
+`github` / `x` / `linkedin` / `qiita` / `googleScholar` / `email` の各キーに `label` / `url`（emailのみ追加で `display`）を持つ。
 
 - `url` を空文字 `""` にすると、そのリンクはHeader/Hero/Footerのどこにも表示されない（`googleScholar` が現在この状態）
 - URLが決まったら `url` を埋めるだけで自動的に表示される
@@ -209,7 +224,7 @@ newsSummary: "BM25 + MMR に関する記事を公開しました。"
 
 ### 外部サイトに書いた記事をリンク投稿として載せる: `url`
 
-Zennなど他サイトに書いた記事を、本文をこのサイトに複製せずに一覧へ載せたい場合は `url` を追加する。
+Qiitaなど他サイトに書いた記事を、本文をこのサイトに複製せずに一覧へ載せたい場合は `url` を追加する。
 
 ```mdx
 ---
@@ -217,7 +232,7 @@ title: "BM25 + MMR 検索パイプラインの設計"
 description: "BM25検索とMMRリランキングを組み合わせた検索パイプラインの設計メモ。"
 date: "2026-07-04"
 showInNews: true
-url: "https://zenn.dev/pepepepepepepe/articles/bm25-mmr"
+url: "https://qiita.com/soy-sorce/items/xxxxxxxx"
 ---
 ```
 

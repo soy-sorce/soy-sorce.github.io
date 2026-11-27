@@ -28,7 +28,7 @@ const LinksSchema = z.object({
     github: LinkEntrySchema,
     x: LinkEntrySchema,
     linkedin: LinkEntrySchema,
-    zenn: LinkEntrySchema,
+    qiita: LinkEntrySchema,
     googleScholar: LinkEntrySchema,
     email: LinkEntrySchema,
   }),
@@ -52,8 +52,15 @@ const WorkEntrySchema = BioPeriodSchema.extend({
   description: LocalizedString,
 });
 
+const ScholarshipEntrySchema = z.object({
+  year: z.number(),
+  name: LocalizedString,
+  description: LocalizedString.optional(),
+});
+
 const BioSchema = z.object({
   education: z.array(EducationEntrySchema),
+  scholarships: z.array(ScholarshipEntrySchema).default([]),
   work: z.array(WorkEntrySchema),
 });
 
